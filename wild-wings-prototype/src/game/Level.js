@@ -443,22 +443,23 @@ class Level {
    * @param {number} cameraX - Camera X offset for scrolling
    */
   render(ctx, canvasWidth, canvasHeight, cameraX) {
-    // Draw background (sky with gradient)
+    // Draw background (soft watercolor sky with gradient)
     const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
-    gradient.addColorStop(0, '#87CEEB');
-    gradient.addColorStop(1, '#B0D8F0');
+    gradient.addColorStop(0, '#E8D5E8');  // Pale lavender
+    gradient.addColorStop(0.5, '#F0DDD8'); // Soft dusty rose
+    gradient.addColorStop(1, '#F5E6D3');  // Soft peach/cream
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     // Draw parallax clouds
     this.renderClouds(ctx, canvasWidth, canvasHeight, cameraX);
 
-    // Draw ground
-    ctx.fillStyle = '#228B22';
+    // Draw ground (muted sage green)
+    ctx.fillStyle = '#A8B5A0';
     ctx.fillRect(0, canvasHeight - 30, canvasWidth, 30);
 
-    // Add grass texture to ground
-    ctx.fillStyle = '#32CD32';
+    // Add soft grass texture to ground
+    ctx.fillStyle = 'rgba(186, 199, 176, 0.5)';  // Very soft green overlay
     for (let i = 0; i < canvasWidth; i += 20) {
       ctx.fillRect(i, canvasHeight - 30, 10, 5);
     }
@@ -506,8 +507,8 @@ class Level {
       const screenX = parallaxX % (canvasWidth + cloud.size * 2) - cloud.size;
 
       ctx.save();
-      ctx.globalAlpha = cloud.opacity;
-      ctx.fillStyle = '#FFFFFF';
+      ctx.globalAlpha = cloud.opacity * 0.4;  // More subtle, watercolor-like
+      ctx.fillStyle = '#F8F5F0';  // Very soft off-white
 
       // Draw cloud as 3 overlapping circles
       ctx.beginPath();
@@ -532,22 +533,22 @@ class Level {
 
     const screenX = zone.x - cameraX;
 
-    // Draw platform with glow effect
+    // Draw platform with soft glow effect
     ctx.save();
-    ctx.shadowColor = '#90EE90';
-    ctx.shadowBlur = 10;
-    ctx.fillStyle = '#90EE90'; // Light green
+    ctx.shadowColor = 'rgba(200, 230, 208, 0.6)';  // Soft mint glow
+    ctx.shadowBlur = 15;
+    ctx.fillStyle = '#C8E6D0'; // Soft mint green
     ctx.fillRect(screenX, zone.y, zone.width, zone.height);
     ctx.restore();
 
-    // Add border
-    ctx.strokeStyle = '#228B22'; // Forest green
-    ctx.lineWidth = 3;
+    // Add soft border
+    ctx.strokeStyle = '#9BAA8C'; // Muted moss green
+    ctx.lineWidth = 2;
     ctx.strokeRect(screenX, zone.y, zone.width, zone.height);
 
-    // Add cloud-like texture
-    ctx.fillStyle = '#FFFFFF';
-    ctx.globalAlpha = 0.3;
+    // Add cloud-like texture (more subtle)
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.globalAlpha = 0.4;
     ctx.beginPath();
     ctx.arc(screenX + 30, zone.y + 20, 20, 0, Math.PI * 2);
     ctx.arc(screenX + 60, zone.y + 20, 25, 0, Math.PI * 2);
@@ -555,8 +556,8 @@ class Level {
     ctx.fill();
     ctx.globalAlpha = 1;
 
-    // Add text label
-    ctx.fillStyle = '#228B22';
+    // Add text label (softer color)
+    ctx.fillStyle = '#6B7A5F';  // Muted green
     ctx.font = 'bold 14px Arial';
     ctx.textAlign = 'center';
     ctx.fillText('SAFE', screenX + zone.width / 2, zone.y + zone.height / 2);
@@ -570,27 +571,28 @@ class Level {
    * @param {number} canvasHeight - Canvas height
    */
   renderStartScreen(ctx, canvasWidth, canvasHeight) {
-    // Semi-transparent overlay
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    // Semi-transparent overlay (softer)
+    ctx.fillStyle = 'rgba(232, 213, 232, 0.6)';  // Soft lavender overlay
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     // Title
-    ctx.fillStyle = '#FFD700';
+    ctx.fillStyle = '#D9B382';  // Soft amber
     ctx.font = 'bold 48px Arial';
     ctx.textAlign = 'center';
     ctx.fillText(`Level ${this.levelNumber}`, canvasWidth / 2, canvasHeight / 2 - 50);
 
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = '#8BA3B8';  // Dusty blue
     ctx.font = 'bold 32px Arial';
     ctx.fillText(this.levelName, canvasWidth / 2, canvasHeight / 2);
 
     // Instructions
     ctx.font = '20px Arial';
+    ctx.fillStyle = '#6B7A7A';  // Muted slate
     ctx.fillText('Press SPACE to start', canvasWidth / 2, canvasHeight / 2 + 60);
 
     // Controls reminder
     ctx.font = '16px Arial';
-    ctx.fillStyle = '#AAAAAA';
+    ctx.fillStyle = '#9BA3A8';  // Soft gray
     ctx.fillText('SPACE: Flap | ARROWS: Move | E: Use Ability', canvasWidth / 2, canvasHeight / 2 + 100);
   }
 
@@ -601,25 +603,25 @@ class Level {
    * @param {number} canvasHeight - Canvas height
    */
   renderSafeZoneScreen(ctx, canvasWidth, canvasHeight) {
-    // Semi-transparent overlay
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    // Semi-transparent overlay (softer)
+    ctx.fillStyle = 'rgba(200, 230, 208, 0.5)';  // Soft mint overlay
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     // Title
-    ctx.fillStyle = '#90EE90';
+    ctx.fillStyle = '#9BAA8C';  // Muted moss green
     ctx.font = 'bold 42px Arial';
     ctx.textAlign = 'center';
     ctx.fillText('Safe Zone', canvasWidth / 2, canvasHeight / 2 - 30);
 
     // Stats
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = '#6B7A7A';  // Muted slate
     ctx.font = '24px Arial';
     ctx.fillText(`Feathers: ${this.feathersCollected} / ${this.totalFeathers}`, canvasWidth / 2, canvasHeight / 2 + 20);
     ctx.fillText(`Time: ${this.elapsedTime}s`, canvasWidth / 2, canvasHeight / 2 + 50);
 
     // Continue instruction
     ctx.font = '20px Arial';
-    ctx.fillStyle = '#FFD700';
+    ctx.fillStyle = '#D9B382';  // Soft amber
     ctx.fillText('Press SPACE to continue', canvasWidth / 2, canvasHeight / 2 + 100);
   }
 
@@ -630,36 +632,36 @@ class Level {
    * @param {number} canvasHeight - Canvas height
    */
   renderEndScreen(ctx, canvasWidth, canvasHeight) {
-    // Semi-transparent overlay
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+    // Semi-transparent overlay (softer)
+    ctx.fillStyle = 'rgba(232, 213, 232, 0.7)';  // Soft lavender overlay
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     // Title
-    ctx.fillStyle = '#FFD700';
+    ctx.fillStyle = '#D9B382';  // Soft amber
     ctx.font = 'bold 52px Arial';
     ctx.textAlign = 'center';
     ctx.fillText('Level Complete!', canvasWidth / 2, canvasHeight / 2 - 80);
 
     // Stats
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = '#6B7A7A';  // Muted slate
     ctx.font = '28px Arial';
     ctx.fillText(`Feathers Collected: ${this.feathersCollected} / ${this.totalFeathers}`, canvasWidth / 2, canvasHeight / 2 - 10);
     ctx.fillText(`Time: ${this.elapsedTime}s`, canvasWidth / 2, canvasHeight / 2 + 30);
 
     // Completion percentage
     const percentage = Math.floor((this.feathersCollected / this.totalFeathers) * 100);
-    ctx.fillStyle = percentage === 100 ? '#FFD700' : '#90EE90';
+    ctx.fillStyle = percentage === 100 ? '#D9B382' : '#9BAA8C';  // Soft amber or muted moss
     ctx.font = '24px Arial';
     ctx.fillText(`Completion: ${percentage}%`, canvasWidth / 2, canvasHeight / 2 + 70);
 
     // Instructions
-    ctx.fillStyle = '#AAAAAA';
+    ctx.fillStyle = '#9BA3A8';  // Soft gray
     ctx.font = '20px Arial';
     ctx.fillText('Press R to restart | Press M for menu', canvasWidth / 2, canvasHeight / 2 + 120);
 
     // Show unlock message for Level 2
     if (this.levelNumber === 1) {
-      ctx.fillStyle = '#2ECC71';
+      ctx.fillStyle = '#9BAA8C';  // Muted moss green
       ctx.font = 'bold 22px Arial';
       ctx.fillText('Level 2 Unlocked!', canvasWidth / 2, canvasHeight / 2 + 160);
     }
@@ -672,11 +674,11 @@ class Level {
    */
   renderHUD(ctx, canvasWidth) {
     // Feather counter (top-right)
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = '#F5F0E8';  // Soft off-white
     ctx.font = 'bold 24px Arial';
     ctx.textAlign = 'right';
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(90, 90, 90, 0.4)';  // Soft charcoal with transparency
+    ctx.lineWidth = 2;
 
     const featherText = `Feathers: ${this.feathersCollected}/${this.totalFeathers}`;
     ctx.strokeText(featherText, canvasWidth - 20, 40);
@@ -690,7 +692,7 @@ class Level {
     // Unlocked abilities (top-left)
     if (this.unlockedAbilities.length > 0) {
       ctx.textAlign = 'left';
-      ctx.fillStyle = '#FFD700';
+      ctx.fillStyle = '#D9B382';  // Soft amber
       ctx.font = 'bold 18px Arial';
       ctx.strokeText('Abilities:', 20, 30);
       ctx.fillText('Abilities:', 20, 30);

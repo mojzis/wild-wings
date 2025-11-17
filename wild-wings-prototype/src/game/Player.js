@@ -27,8 +27,10 @@ class Player {
     // Horizontal movement speed
     this.horizontalSpeed = 3;
 
-    // Color (blue bird)
-    this.color = '#4A90E2';
+    // Color (soft dusty blue bird)
+    this.color = '#8BA3B8';  // Muted dusty blue
+    this.wingColor = '#6B8399';  // Darker muted blue for wings
+    this.beakColor = '#D9B382';  // Soft amber/honey for beak
 
     // Ability system reference (set externally)
     this.abilitySystem = null;
@@ -99,8 +101,8 @@ class Player {
       this.canBreakObstacles = true;
       this.velocityY = Physics.applyGravity(this.velocityY);
 
-      // Create blue trail particles
-      this.createTrailParticle('#4A90E2', '#2E5F8A');
+      // Create soft blue trail particles
+      this.createTrailParticle('#8BA3B8', '#6B8399');
     } else if (activeAbility === 'hover') {
       // Hover: Freeze in place
       this.velocityX = 0;
@@ -187,8 +189,8 @@ class Player {
           x: this.x + this.width / 2 + Math.cos(particleAngle) * radius,
           y: this.y + this.height / 2 + Math.sin(particleAngle) * radius,
           radius: 2,
-          color: '#E94B3C',
-          alpha: 0.6,
+          color: '#D9A5A0',  // Soft dusty rose
+          alpha: 0.5,  // More subtle
           life: 10
         });
       }
@@ -207,8 +209,8 @@ class Player {
         vx: -2 - Math.random() * 2,
         vy: (Math.random() - 0.5) * 2,
         length: 10 + Math.random() * 10,
-        color: Math.random() < 0.5 ? '#7ED321' : '#FFFFFF',
-        alpha: 0.8,
+        color: Math.random() < 0.5 ? '#A8B89F' : '#F5F0E8',  // Soft sage or off-white
+        alpha: 0.6,  // More subtle
         life: 30
       });
     }
@@ -267,7 +269,7 @@ class Player {
     ctx.fill();
 
     // Beak (small triangle)
-    ctx.fillStyle = '#FFA500';
+    ctx.fillStyle = this.beakColor;  // Soft amber
     ctx.beginPath();
     ctx.moveTo(centerX + this.width / 2, centerY - this.height / 6);
     ctx.lineTo(centerX + this.width / 2 + 8, centerY - this.height / 6 - 3);
@@ -276,18 +278,18 @@ class Player {
     ctx.fill();
 
     // Eye
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';  // Soft white
     ctx.beginPath();
     ctx.arc(centerX + this.width / 3, centerY - this.height / 4, 3, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = '#000000';
+    ctx.fillStyle = 'rgba(90, 90, 90, 0.8)';  // Soft charcoal
     ctx.beginPath();
     ctx.arc(centerX + this.width / 3 + 1, centerY - this.height / 4, 1.5, 0, Math.PI * 2);
     ctx.fill();
 
     // Wings (animated based on wingFlap)
     const wingOffset = this.wingFlap > 0 ? -this.wingFlap : 0;
-    ctx.fillStyle = '#2E5F8A';
+    ctx.fillStyle = this.wingColor;  // Darker muted blue
 
     // Left wing
     ctx.beginPath();

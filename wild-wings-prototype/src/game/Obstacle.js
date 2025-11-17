@@ -17,9 +17,10 @@ class Obstacle {
     this.width = width;
     this.height = height;
 
-    // Brown color for tree branches
-    this.color = '#8B4513';
-    this.shadowColor = '#654321';
+    // Soft muted brown/taupe color for tree branches
+    this.color = '#B09A8A';  // Soft taupe
+    this.shadowColor = '#9B8578';  // Slightly darker muted brown
+    this.highlightColor = '#C4B5A8';  // Lighter taupe for highlights
   }
 
   /**
@@ -27,23 +28,33 @@ class Obstacle {
    * @param {CanvasRenderingContext2D} ctx - Canvas rendering context
    */
   render(ctx) {
-    // Draw main obstacle
+    // Draw main obstacle with soft edges
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
 
-    // Add shadow/depth effect
+    // Add soft shadow/depth effect
     ctx.fillStyle = this.shadowColor;
+    ctx.globalAlpha = 0.5;  // Softer shadow
     ctx.fillRect(this.x + this.width - 5, this.y, 5, this.height);
+    ctx.globalAlpha = 1.0;
 
-    // Add texture lines to make it look more like wood
+    // Add subtle texture lines
     ctx.strokeStyle = this.shadowColor;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;  // Thinner lines for subtlety
+    ctx.globalAlpha = 0.4;  // Very subtle
     for (let i = 10; i < this.height; i += 15) {
       ctx.beginPath();
       ctx.moveTo(this.x + 5, this.y + i);
       ctx.lineTo(this.x + this.width - 5, this.y + i);
       ctx.stroke();
     }
+    ctx.globalAlpha = 1.0;
+
+    // Add soft highlight on left edge
+    ctx.fillStyle = this.highlightColor;
+    ctx.globalAlpha = 0.3;
+    ctx.fillRect(this.x, this.y, 3, this.height);
+    ctx.globalAlpha = 1.0;
   }
 
   /**
