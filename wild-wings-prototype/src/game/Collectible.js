@@ -30,10 +30,10 @@ class Collectible {
     this.sparkleRadius = 0;
     this.sparkleAlpha = 1;
 
-    // Colors - soft watercolor palette
-    this.primaryColor = '#D9B382'; // Soft amber/honey
-    this.secondaryColor = '#C9A574'; // Slightly darker warm beige
-    this.sparkleColor = '#F5F0E8'; // Soft off-white sparkle
+    // Colors - enhanced golden palette for better visibility
+    this.primaryColor = '#F4C430'; // Brighter saffron gold
+    this.secondaryColor = '#FFD700'; // Vivid golden yellow
+    this.sparkleColor = '#FFFACD'; // Bright lemon chiffon sparkle
   }
 
   /**
@@ -60,28 +60,28 @@ class Collectible {
     const screenX = this.x - cameraX;
 
     if (!this.collected) {
-      // Draw main feather circle with soft glow
+      // Draw main feather circle with enhanced glow
       ctx.save();
-      ctx.shadowColor = 'rgba(217, 179, 130, 0.4)';  // Soft amber glow
-      ctx.shadowBlur = 8;
+      ctx.shadowColor = 'rgba(255, 215, 0, 0.8)';  // Bright golden glow
+      ctx.shadowBlur = 15;  // Increased blur for more visibility
       ctx.fillStyle = this.primaryColor;
       ctx.beginPath();
       ctx.arc(screenX + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 
-      // Add inner glow (more subtle)
+      // Add inner glow (brighter)
       ctx.fillStyle = this.secondaryColor;
-      ctx.globalAlpha = 0.7;  // Softer inner glow
+      ctx.globalAlpha = 0.9;  // Brighter inner glow
       ctx.beginPath();
       ctx.arc(screenX + this.width / 2, this.y + this.height / 2, this.width / 3, 0, Math.PI * 2);
       ctx.fill();
       ctx.globalAlpha = 1.0;
 
-      // Add soft sparkle points
+      // Add brighter sparkle points
       ctx.fillStyle = this.sparkleColor;
-      ctx.globalAlpha = 0.6;  // More subtle sparkles
-      const sparkleSize = 2;
+      ctx.globalAlpha = 0.9;  // More visible sparkles
+      const sparkleSize = 3;  // Larger sparkles
       ctx.fillRect(screenX + this.width / 2 - sparkleSize / 2, this.y + 2, sparkleSize, sparkleSize);
       ctx.fillRect(screenX + 2, this.y + this.height / 2 - sparkleSize / 2, sparkleSize, sparkleSize);
       ctx.fillRect(screenX + this.width - 2, this.y + this.height / 2 - sparkleSize / 2, sparkleSize, sparkleSize);
