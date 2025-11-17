@@ -683,7 +683,7 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
         <div style={styles.info}>
           <p>Use SPACEBAR to flap and gain altitude</p>
           <p>Use ARROW KEYS to move left, right, or descend</p>
-          <p>Collect golden feathers and reach the safe zone!</p>
+          <p>Collect golden feathers 🟡 and reach the safe zone!</p>
           <p>Avoid the brown tree branches!</p>
           <p>Press F to toggle fullscreen mode</p>
         </div>
