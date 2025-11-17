@@ -30,10 +30,10 @@ class Collectible {
     this.sparkleRadius = 0;
     this.sparkleAlpha = 1;
 
-    // Colors
-    this.primaryColor = '#FFD700'; // Golden yellow
-    this.secondaryColor = '#FFA500'; // Orange
-    this.sparkleColor = '#FFFFFF'; // White sparkle
+    // Colors - soft watercolor palette
+    this.primaryColor = '#D9B382'; // Soft amber/honey
+    this.secondaryColor = '#C9A574'; // Slightly darker warm beige
+    this.sparkleColor = '#F5F0E8'; // Soft off-white sparkle
   }
 
   /**
@@ -60,35 +60,43 @@ class Collectible {
     const screenX = this.x - cameraX;
 
     if (!this.collected) {
-      // Draw main feather circle
+      // Draw main feather circle with soft glow
+      ctx.save();
+      ctx.shadowColor = 'rgba(217, 179, 130, 0.4)';  // Soft amber glow
+      ctx.shadowBlur = 8;
       ctx.fillStyle = this.primaryColor;
       ctx.beginPath();
       ctx.arc(screenX + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
       ctx.fill();
+      ctx.restore();
 
-      // Add inner glow
+      // Add inner glow (more subtle)
       ctx.fillStyle = this.secondaryColor;
+      ctx.globalAlpha = 0.7;  // Softer inner glow
       ctx.beginPath();
       ctx.arc(screenX + this.width / 2, this.y + this.height / 2, this.width / 3, 0, Math.PI * 2);
       ctx.fill();
+      ctx.globalAlpha = 1.0;
 
-      // Add sparkle points
+      // Add soft sparkle points
       ctx.fillStyle = this.sparkleColor;
+      ctx.globalAlpha = 0.6;  // More subtle sparkles
       const sparkleSize = 2;
       ctx.fillRect(screenX + this.width / 2 - sparkleSize / 2, this.y + 2, sparkleSize, sparkleSize);
       ctx.fillRect(screenX + 2, this.y + this.height / 2 - sparkleSize / 2, sparkleSize, sparkleSize);
       ctx.fillRect(screenX + this.width - 2, this.y + this.height / 2 - sparkleSize / 2, sparkleSize, sparkleSize);
       ctx.fillRect(screenX + this.width / 2 - sparkleSize / 2, this.y + this.height - 2, sparkleSize, sparkleSize);
+      ctx.globalAlpha = 1.0;
     } else if (this.sparkleAlpha > 0) {
-      // Draw collection sparkle effect
-      ctx.globalAlpha = this.sparkleAlpha;
+      // Draw collection sparkle effect (softer)
+      ctx.globalAlpha = this.sparkleAlpha * 0.7;  // More subtle
       ctx.strokeStyle = this.sparkleColor;
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 2;  // Thinner lines
       ctx.beginPath();
       ctx.arc(screenX + this.width / 2, this.y + this.height / 2, this.sparkleRadius, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Draw sparkle rays
+      // Draw sparkle rays (softer)
       for (let i = 0; i < 8; i++) {
         const angle = (Math.PI * 2 * i) / 8;
         const startX = screenX + this.width / 2 + Math.cos(angle) * this.sparkleRadius / 2;

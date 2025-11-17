@@ -320,10 +320,10 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
         // Render ability UI
         renderAbilityUI(ctx);
 
-        // Draw controls hint
+        // Draw controls hint (softer colors)
         ctx.font = '14px Arial';
-        ctx.fillStyle = '#FFFFFF';
-        ctx.strokeStyle = '#000000';
+        ctx.fillStyle = '#F5F0E8';  // Soft off-white
+        ctx.strokeStyle = 'rgba(90, 90, 90, 0.4)';  // Soft charcoal
         ctx.lineWidth = 2;
         ctx.textAlign = 'left';
         const hint = 'SPACE: Flap | ARROWS: Move | E: Use Ability';
@@ -364,13 +364,15 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
         const y = startY;
         const size = 50;
 
-        // Background box
-        ctx.fillStyle = isSelected ? '#FFD700' : '#34495E';
+        // Background box (softer colors)
+        ctx.fillStyle = isSelected ? '#D9B382' : '#8BA3B8';  // Soft amber or dusty blue
+        ctx.globalAlpha = 0.8;  // Subtle transparency
         ctx.fillRect(x, y, size, size);
+        ctx.globalAlpha = 1.0;
 
-        // Border
-        ctx.strokeStyle = isSelected ? '#FFA500' : '#2C3E50';
-        ctx.lineWidth = 3;
+        // Border (softer)
+        ctx.strokeStyle = isSelected ? '#C9A574' : '#6B8399';  // Muted tones
+        ctx.lineWidth = 2;
         ctx.strokeRect(x, y, size, size);
 
         // Ability icon
@@ -384,18 +386,23 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
           ctx.fillRect(x, y, size, size);
         }
 
-        // Active glow effect
+        // Active glow effect (softer)
         if (abilityState.state === 'active') {
           ctx.save();
-          ctx.shadowColor = abilityData.color;
-          ctx.shadowBlur = 15;
-          ctx.fillStyle = abilityData.color;
+          // Use softer glow color
+          const softGlowColor = abilityData.color === '#4A90E2' ? '#8BA3B8' :
+                                abilityData.color === '#E94B3C' ? '#D9A5A0' : '#A8B89F';
+          ctx.shadowColor = softGlowColor;
+          ctx.shadowBlur = 12;
+          ctx.fillStyle = softGlowColor;
+          ctx.globalAlpha = 0.6;
           ctx.fillRect(x, y, size, size);
+          ctx.globalAlpha = 1.0;
           ctx.restore();
         }
 
-        // Draw icon
-        ctx.fillStyle = abilityState.state === 'ready' ? '#FFFFFF' : '#888888';
+        // Draw icon (softer colors)
+        ctx.fillStyle = abilityState.state === 'ready' ? '#F5F0E8' : '#9BA3A8';  // Soft off-white or gray
         ctx.fillText(abilityData.icon, x + size / 2, y + size / 2);
 
         // Cooldown overlay
@@ -404,31 +411,31 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
           ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
           ctx.fillRect(x, y, size, cooldownHeight);
 
-          // Cooldown timer text
+          // Cooldown timer text (softer colors)
           ctx.font = 'bold 16px Arial';
-          ctx.fillStyle = '#FFFFFF';
-          ctx.strokeStyle = '#000000';
+          ctx.fillStyle = '#F5F0E8';  // Soft off-white
+          ctx.strokeStyle = 'rgba(90, 90, 90, 0.5)';  // Soft charcoal
           ctx.lineWidth = 2;
           ctx.strokeText(abilityState.cooldownRemaining + 's', x + size / 2, y + size / 2);
           ctx.fillText(abilityState.cooldownRemaining + 's', x + size / 2, y + size / 2);
         }
 
-        // Number key indicator
+        // Number key indicator (softer)
         ctx.font = 'bold 12px Arial';
-        ctx.fillStyle = '#FFFFFF';
-        ctx.strokeStyle = '#000000';
+        ctx.fillStyle = '#F5F0E8';
+        ctx.strokeStyle = 'rgba(90, 90, 90, 0.5)';
         ctx.lineWidth = 2;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
         ctx.strokeText(index + 1, x + 3, y + 3);
         ctx.fillText(index + 1, x + 3, y + 3);
 
-        // Ability name below
+        // Ability name below (softer)
         ctx.font = '12px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
-        ctx.fillStyle = '#FFFFFF';
-        ctx.strokeStyle = '#000000';
+        ctx.fillStyle = '#F5F0E8';
+        ctx.strokeStyle = 'rgba(90, 90, 90, 0.4)';
         ctx.lineWidth = 2;
         ctx.strokeText(abilityData.name, x + size / 2, y + size + 5);
         ctx.fillText(abilityData.name, x + size / 2, y + size + 5);
@@ -443,9 +450,9 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
           ctx.font = 'bold 14px Arial';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'top';
-          ctx.fillStyle = '#FFD700';
-          ctx.strokeStyle = '#000000';
-          ctx.lineWidth = 3;
+          ctx.fillStyle = '#D9B382';  // Soft amber
+          ctx.strokeStyle = 'rgba(90, 90, 90, 0.4)';  // Soft charcoal
+          ctx.lineWidth = 2;
           const text = `Press E to use ${selectedData.name}`;
           ctx.strokeText(text, CANVAS_WIDTH / 2, startY - 25);
           ctx.fillText(text, CANVAS_WIDTH / 2, startY - 25);
@@ -656,8 +663,8 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
             ...styles.fullscreenButton,
             ...(isFullscreen ? styles.fullscreenButtonInFullscreen : {})
           }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#1F5A7A'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#2C7DA0'}
+          onMouseOver={(e) => e.target.style.backgroundColor = '#6B8399'}
+          onMouseOut={(e) => e.target.style.backgroundColor = '#8BA3B8'}
           title="Toggle Fullscreen (F)"
         >
           {isFullscreen ? '⊗' : '⛶'}
@@ -699,8 +706,8 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
               <button
                 style={pauseStyles.button}
                 onClick={() => setIsPaused(false)}
-                onMouseOver={(e) => e.target.style.backgroundColor = '#27AE60'}
-                onMouseOut={(e) => e.target.style.backgroundColor = '#2ECC71'}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#8A9A7D'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#9BAA8C'}
               >
                 Resume (ESC)
               </button>
@@ -711,8 +718,8 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
                     onReturnToMenu();
                   }
                 }}
-                onMouseOver={(e) => e.target.style.backgroundColor = '#2980B9'}
-                onMouseOut={(e) => e.target.style.backgroundColor = '#3498DB'}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#7A93A9'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#8BA3B8'}
               >
                 Main Menu
               </button>
@@ -732,7 +739,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: '100vh',
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#E8D5E8',  // Soft lavender background
     padding: '20px'
   },
   containerFullscreen: {
@@ -756,18 +763,18 @@ const styles = {
     zIndex: 1000
   },
   title: {
-    color: '#ECF0F1',
+    color: '#6B7A7A',  // Muted slate
     fontSize: '48px',
     margin: '0',
     fontFamily: 'Arial, sans-serif',
-    textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+    textShadow: '2px 2px 4px rgba(232, 213, 232, 0.3)'  // Soft shadow
   },
   titleFullscreen: {
     display: 'none'
   },
   fullscreenButton: {
-    backgroundColor: '#2C7DA0',
-    color: '#FFFFFF',
+    backgroundColor: '#8BA3B8',  // Dusty blue
+    color: '#F5F0E8',  // Soft off-white
     border: 'none',
     borderRadius: '8px',
     width: '50px',
@@ -775,7 +782,7 @@ const styles = {
     fontSize: '24px',
     cursor: 'pointer',
     transition: 'all 0.2s ease',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+    boxShadow: '0 4px 8px rgba(139, 163, 184, 0.3)',  // Soft shadow
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
@@ -784,14 +791,14 @@ const styles = {
     position: 'fixed',
     top: '10px',
     right: '10px',
-    backgroundColor: 'rgba(44, 125, 160, 0.8)',
+    backgroundColor: 'rgba(139, 163, 184, 0.8)',  // Dusty blue with transparency
     zIndex: 1001
   },
   canvas: {
-    border: '4px solid #34495E',
+    border: '4px solid #C8B8C8',  // Soft mauve border
     borderRadius: '8px',
-    boxShadow: '0 8px 16px rgba(0,0,0,0.3)',
-    backgroundColor: '#87CEEB'
+    boxShadow: '0 8px 16px rgba(107, 122, 122, 0.2)',  // Very soft shadow
+    backgroundColor: '#E8D5E8'  // Match background
   },
   canvasFullscreen: {
     position: 'absolute',
@@ -808,7 +815,7 @@ const styles = {
   },
   info: {
     marginTop: '20px',
-    color: '#ECF0F1',
+    color: '#6B7A7A',  // Muted slate
     textAlign: 'center',
     fontSize: '16px',
     lineHeight: '1.6'
@@ -822,22 +829,22 @@ const pauseStyles = {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: 'rgba(232, 213, 232, 0.7)',  // Soft lavender overlay
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 2000
   },
   menu: {
-    backgroundColor: '#34495E',
+    backgroundColor: '#F5F0E8',  // Soft off-white
     borderRadius: '20px',
     padding: '40px',
-    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.7)',
+    boxShadow: '0 10px 40px rgba(107, 122, 122, 0.3)',  // Soft shadow
     textAlign: 'center',
     minWidth: '400px'
   },
   title: {
-    color: '#ECF0F1',
+    color: '#6B7A7A',  // Muted slate
     fontSize: '48px',
     margin: '0 0 30px 0',
     fontWeight: 'bold'
@@ -849,8 +856,8 @@ const pauseStyles = {
     marginBottom: '20px'
   },
   button: {
-    backgroundColor: '#2ECC71',
-    color: '#FFFFFF',
+    backgroundColor: '#9BAA8C',  // Muted moss green
+    color: '#F5F0E8',  // Soft off-white
     border: 'none',
     padding: '15px 30px',
     borderRadius: '30px',
@@ -858,13 +865,13 @@ const pauseStyles = {
     fontWeight: 'bold',
     cursor: 'pointer',
     transition: 'all 0.2s ease',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)'
+    boxShadow: '0 4px 8px rgba(155, 170, 140, 0.3)'  // Soft shadow
   },
   secondaryButton: {
-    backgroundColor: '#3498DB'
+    backgroundColor: '#8BA3B8'  // Dusty blue
   },
   hint: {
-    color: '#95A5A6',
+    color: '#9BA3A8',  // Soft gray
     fontSize: '14px',
     margin: '0',
     fontStyle: 'italic'
