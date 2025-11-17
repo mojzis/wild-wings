@@ -22,6 +22,9 @@ class Level {
     } else if (levelNumber === 2) {
       this.width = 2800;
       this.levelName = 'Storm Chaser';
+    } else if (levelNumber === 3) {
+      this.width = 3200;
+      this.levelName = 'Sky Master';
     }
     this.height = 600; // Level height in pixels
 
@@ -264,6 +267,8 @@ class Level {
       this.createLevel1();
     } else if (this.levelNumber === 2) {
       this.createLevel2();
+    } else if (this.levelNumber === 3) {
+      this.createLevel3();
     }
   }
 
@@ -340,6 +345,57 @@ class Level {
 
     // Create collectibles - 20 feathers, randomized positions
     const numFeathers = 20;
+    const featherPositions = this.generateRandomFeatherPositions(numFeathers, 200, this.width - 200);
+
+    this.collectibles = featherPositions.map(pos => new Collectible(pos.x, pos.y));
+    this.totalFeathers = this.collectibles.length;
+  }
+
+  /**
+   * Create Level 3 layout (hardest)
+   */
+  createLevel3() {
+    // Three safe zones for Level 3
+    this.safeZones = [
+      {
+        x: 1000,
+        y: 260,
+        width: 120,
+        height: 80,
+        activated: false
+      },
+      {
+        x: 2000,
+        y: 300,
+        width: 120,
+        height: 80,
+        activated: false
+      },
+      {
+        x: 2800,
+        y: 280,
+        width: 120,
+        height: 80,
+        activated: false
+      }
+    ];
+
+    // Create obstacles for Level 3 (hardest - 30 obstacles with even tighter gaps) - randomized positions
+    const numBranches = 30;
+    const branchData = this.generateRandomBranchPositions(
+      numBranches,
+      200,           // startX
+      this.width,    // endX
+      65,            // minWidth (slightly wider)
+      90,            // maxWidth (larger obstacles)
+      130,           // minHeight (taller branches)
+      200            // maxHeight (very tall branches)
+    );
+
+    this.obstacles = branchData.map(b => new Obstacle(b.x, b.y, b.width, b.height));
+
+    // Create collectibles - 25 feathers, randomized positions
+    const numFeathers = 25;
     const featherPositions = this.generateRandomFeatherPositions(numFeathers, 200, this.width - 200);
 
     this.collectibles = featherPositions.map(pos => new Collectible(pos.x, pos.y));
@@ -429,6 +485,7 @@ class Level {
     // Show different encounters based on level and safe zone
     // Level 1: Peregrine Falcon (0)
     // Level 2: Hummingbird (1), then Albatross (2)
+    // Level 3: Bar-tailed Godwit (3), Barn Owl (4), Arctic Tern (5)
     let encounterIndex;
 
     if (this.levelNumber === 1) {
@@ -436,6 +493,9 @@ class Level {
     } else if (this.levelNumber === 2) {
       // First safe zone: Hummingbird, Second safe zone: Albatross
       encounterIndex = this.currentSafeZoneIndex + 1;
+    } else if (this.levelNumber === 3) {
+      // First safe zone: Bar-tailed Godwit, Second: Barn Owl, Third: Arctic Tern
+      encounterIndex = this.currentSafeZoneIndex + 3;
     }
 
     if (encounterIndex !== undefined && encounterIndex < birdFacts.length) {
@@ -808,7 +868,10 @@ class Level {
     const abilityNames = {
       'speed_boost': 'Dive Bomb',
       'hover': 'Steady Hover',
-      'extended_glide': 'Wind Rider'
+      'extended_glide': 'Wind Rider',
+      'endurance_flight': 'Marathon Wings',
+      'echo_vision': 'Silent Hunter',
+      'polar_stamina': 'Endless Journey'
     };
     return abilityNames[abilityId] || abilityId;
   }
