@@ -56,77 +56,168 @@ Think: Tux Racer meets Duolingo, but for early readers practicing sight words an
 
 ## Technical Architecture
 
+### Modern Tech Stack (2025)
+
+**Core Framework:**
+- **Phaser 3** - Battle-tested HTML5 game framework with WebGL/Canvas rendering
+- **React 18+** - UI layer (menus, HUD, settings)
+- **TypeScript** - Type safety and better developer experience
+- **Vite** - Lightning-fast build tool and dev server
+
+**Why Phaser 3?**
+- Complete game framework (physics, scenes, sprites, collision built-in)
+- Official React + TypeScript template available
+- Excellent performance with WebGL acceleration
+- Large community (37.8k+ GitHub stars)
+- Perfect for 2D games like ours
+- Built-in text rendering, tweens, and particle effects
+
 ### Project Structure
 ```
 word-reader-downhill/
 ├── src/
-│   ├── App.js                    # Root component
+│   ├── App.tsx                       # React root component
 │   ├── components/
-│   │   ├── GameCanvas.jsx        # Main game loop (60fps)
-│   │   ├── MainMenu.jsx          # Start screen
-│   │   ├── GameOver.jsx          # Results screen
-│   │   └── Settings.jsx          # Difficulty/speed settings
+│   │   ├── PhaserGame.tsx            # Phaser container component
+│   │   ├── MainMenu.tsx              # Start screen UI (React)
+│   │   ├── GameOverlay.tsx           # HUD overlay (React)
+│   │   └── Settings.tsx              # Difficulty/speed settings
 │   ├── game/
-│   │   ├── Player.js             # Skier/slider character
-│   │   ├── Lane.js               # Lane system (3-5 lanes)
-│   │   ├── Sign.js               # Word sign entities
-│   │   ├── Obstacle.js           # Hazard objects
-│   │   ├── WordManager.js        # Sign generation & logic
-│   │   ├── Physics.js            # Movement constants
-│   │   └── ScoreManager.js       # Distance/score tracking
-│   └── data/
-│       ├── wordLists.js          # Categorized word lists
-│       └── visualTheme.js        # Color palette definitions
-└── public/
-    └── index.html
+│   │   ├── scenes/
+│   │   │   ├── MainScene.ts          # Primary game scene
+│   │   │   ├── MenuScene.ts          # Menu scene
+│   │   │   └── GameOverScene.ts      # Results scene
+│   │   ├── objects/
+│   │   │   ├── Player.ts             # Phaser Sprite - skier character
+│   │   │   ├── Sign.ts               # Phaser Text - word signs
+│   │   │   ├── Obstacle.ts           # Phaser Sprite - hazards
+│   │   │   └── Lane.ts               # Lane positioning logic
+│   │   ├── managers/
+│   │   │   ├── WordManager.ts        # Sign generation & logic
+│   │   │   ├── ScoreManager.ts       # Distance/score tracking
+│   │   │   └── DifficultyManager.ts  # Scaling logic
+│   │   └── config.ts                 # Phaser game configuration
+│   ├── data/
+│   │   ├── wordLists.ts              # Categorized word lists
+│   │   └── theme.ts                  # Color palette & styles
+│   └── main.tsx                      # App entry point
+├── public/
+│   └── assets/                       # Optional: images, fonts
+├── package.json
+├── vite.config.ts
+└── tsconfig.json
 ```
 
-### Game Loop (GameCanvas.jsx)
-- 60fps via requestAnimationFrame
-- Vertical auto-scroll (downhill perspective)
-- Lateral player movement (lane switching)
+### Phaser Scene System (MainScene.ts)
+
+**Scene Lifecycle:**
+- `init()` - Initialize scene data
+- `preload()` - Load assets (fonts, textures if needed)
+- `create()` - Set up game objects, physics, input
+- `update(time, delta)` - Game loop (called ~60fps)
+
+**Main Scene Responsibilities:**
+- Auto-scroll management (vertical camera movement)
+- Player sprite and lane-switching logic
 - Sign spawning based on upcoming obstacles
-- Collision detection (player lane vs obstacle lane)
-- Sign visibility and timing
+- Obstacle generation and pooling
+- Collision detection (overlap between player and obstacles)
+- Score/distance tracking
 
-### Lane System (Lane.js)
-- 3 lanes initially, 5 lanes at higher speeds
-- Each lane has x-position
-- Player snaps to lane center
-- Smooth transitions between lanes (100-200ms)
-- Lane highlighting on sign instructions
+**Key Phaser Features Used:**
+- `this.add.text()` - For word signs with custom styling
+- `this.add.sprite()` or `this.add.graphics()` - For player/obstacles
+- `this.physics.add.overlap()` - Collision detection
+- `this.tweens.add()` - Smooth lane transitions and sign animations
+- `this.cameras.main.scrollY` - Auto-scroll effect
+- `this.input.keyboard` - Arrow key handling
 
-### Sign System (Sign.js)
-- Spawn 3-5 seconds before related obstacle
-- Position: centered above lanes or at specific lane
-- Fade-in animation
-- Large, readable font (minimum 48px)
-- Disappear after player passes decision point
-- Different colors for different sign types
+### Game Objects (Phaser-based)
 
-### Word Manager (WordManager.js)
-- Maintains active word lists by difficulty
-- Generates sign + obstacle pairs
-- Ensures variety (no repeating same word 3x in row)
-- Difficulty scaling:
-  - Level 1: 1-syllable words (STOP, GO, LEFT)
-  - Level 2: 2-syllable words (CAREFUL, DANGER)
-  - Level 3: Compound situations (two signs at once)
-- Random but logical pairing (sign matches obstacle)
+**Player (extends Phaser.GameObjects.Sprite):**
+```typescript
+class Player extends Phaser.GameObjects.Sprite {
+  currentLane: number;      // 0-4 index
+  targetLane: number;       // For smooth transitions
+  isTransitioning: boolean; // Lane change in progress
 
-### Player (Player.js)
-- Current lane (0-4 index)
-- Target lane (for smooth transitions)
-- Animation state (idle, turning, crash)
-- Visual: simple character silhouette on sled/skis
-- Thin outline style matching theme
+  moveToLane(lane: number) {
+    // Uses Phaser tweens for smooth movement
+  }
 
-### Obstacle (Obstacle.js)
-- Lane position
-- Type (rock, tree, gap, branch, etc.)
-- Y position (distance down track)
-- Collision bounds
-- Visual style: minimal line art
+  crash() {
+    // Trigger crash animation and game over
+  }
+}
+```
+
+**Sign (extends Phaser.GameObjects.Text):**
+```typescript
+class Sign extends Phaser.GameObjects.Text {
+  word: string;              // The word to display
+  relatedObstacle: Obstacle; // Linked obstacle
+  spawnDistance: number;     // When to appear
+
+  fadeIn() {
+    // Phaser tween for fade animation
+  }
+
+  checkVisibility(playerY: number) {
+    // Show/hide based on player position
+  }
+}
+```
+
+**Obstacle (extends Phaser.GameObjects.Sprite):**
+```typescript
+class Obstacle extends Phaser.GameObjects.Sprite {
+  lane: number;              // Which lane (0-4)
+  type: string;              // 'rock', 'tree', 'gap', etc.
+  yPosition: number;         // Distance down track
+
+  checkCollision(player: Player): boolean {
+    // Lane-based collision (simple)
+  }
+}
+```
+
+### Lane System
+
+**Implementation:**
+- Static lane x-positions calculated on scene creation
+- 3 lanes initially: [centerX - 150, centerX, centerX + 150]
+- 5 lanes at higher speeds: [x - 300, x - 150, x, x + 150, x + 300]
+- Phaser tweens handle smooth transitions (200ms duration, ease 'Power2')
+
+**Lane Highlighting:**
+- Draw subtle rectangles under lanes when sign appears
+- Fade in/out using Phaser alpha tweens
+
+### Word Manager (TypeScript class)
+
+**Responsibilities:**
+- Maintains word pools by difficulty tier
+- Generates sign-obstacle pairs
+- Anti-repeat logic (last 5 words tracked)
+- Contextual pairing rules
+- Difficulty progression
+
+**Interface:**
+```typescript
+interface SignObstaclePair {
+  word: string;
+  obstacleType: string;
+  lane: number;
+  distance: number;
+}
+
+class WordManager {
+  getNextPair(currentDistance: number): SignObstaclePair;
+  getCurrentDifficulty(): DifficultyTier;
+  markWordSeen(word: string): void;
+  markWordMissed(word: string): void;
+}
+```
 
 ## Visual Design
 
@@ -252,95 +343,150 @@ word-reader-downhill/
 
 ## Implementation Plan
 
-### Phase 1: Core Engine
-- Set up React project structure
-- Implement GameCanvas with 60fps loop
-- Create Lane system (3 lanes initially)
-- Build Player with lane-switching movement
-- Add basic auto-scroll (vertical downhill)
-- Implement visual theme (colors, styles)
+### Phase 1: Project Setup
+- Initialize Vite + React + TypeScript project
+- Install Phaser 3 (`npm install phaser`)
+- Set up basic React component structure
+- Create Phaser game configuration (config.ts)
+- Implement PhaserGame.tsx container component
+- Set up basic MainScene with solid color background
 
-### Phase 2: Obstacle System
-- Create Obstacle class
+### Phase 2: Core Game Loop
+- Build MainScene with update() loop
+- Implement auto-scroll (camera.scrollY increases over time)
+- Create Lane positioning system (3 lanes initially)
+- Build Player sprite with basic rendering (simple shapes via Graphics)
+- Add keyboard input handling (arrow keys)
+- Implement lane-switching with Phaser tweens
+
+### Phase 3: Obstacle System
+- Create Obstacle class (extends Sprite or Graphics)
 - Implement basic obstacle types (rock, tree, gap)
-- Add collision detection (lane-based)
-- Build obstacle spawning system
-- Create obstacle rendering (thin line style)
-- Add crash/failure state
+- Build obstacle spawning system (spawn ahead of camera)
+- Add lane-based collision detection (overlap checks)
+- Implement crash state and game over
+- Add obstacle pooling for performance
 
-### Phase 3: Sign System
-- Build Sign class
-- Implement sign spawning logic
-- Create sign-obstacle pairing
-- Add sign rendering (large text, pastels)
-- Implement sign timing (appear before obstacle)
-- Add sign fade animations
+### Phase 4: Sign System
+- Build Sign class (extends Text with custom styling)
+- Implement sign spawning logic (before obstacles)
+- Create sign-obstacle pairing system
+- Add large text rendering with pastel backgrounds
+- Implement fade-in/fade-out animations (tweens)
+- Add sign timing based on scroll speed
 
-### Phase 4: Word Management
-- Create WordManager class
-- Build word list data structure
-- Implement difficulty scaling
-- Add word rotation logic
-- Create contextual pairing system
-- Build variety/anti-repeat logic
+### Phase 5: Word Management
+- Create WordManager TypeScript class
+- Build word list data structure (wordLists.ts)
+- Implement difficulty tiers and scaling
+- Add word rotation and anti-repeat logic
+- Create contextual pairing rules
+- Integrate with obstacle spawner
 
-### Phase 5: Scoring & Progression
-- Implement distance tracking
-- Add speed scaling (increases over time)
-- Create score calculation
-- Build difficulty transitions
-- Add high score persistence (localStorage)
-- Implement game over screen
+### Phase 6: Scoring & Progression
+- Implement distance tracking (based on camera scroll)
+- Add speed scaling (increases every 500m)
+- Create DifficultyManager for tier transitions
+- Build ScoreManager with localStorage persistence
+- Create GameOverScene with results display
+- Add React overlay for real-time HUD
 
-### Phase 6: Polish & Refinement
-- Refine visual aesthetics (line weights, colors)
-- Add background parallax layers
-- Implement smooth lane transitions
-- Add subtle sound effects (optional)
-- Create settings panel (speed, difficulty)
-- Add tutorial/practice mode
+### Phase 7: Visual Polish
+- Refine color palette application (theme.ts)
+- Add Phaser Graphics rendering for thin-line obstacles
+- Implement parallax background layers (distant hills)
+- Add particle effects for crashes (minimal, subtle)
+- Create custom font loading (Google Fonts)
+- Polish lane transition animations
 
-### Phase 7: Content Expansion
+### Phase 8: UI & Settings
+- Build MainMenu React component
+- Create Settings panel (speed, difficulty, sensitivity)
+- Add pause functionality (spacebar)
+- Implement tutorial overlay (first run)
+- Add sound effects (optional, using Phaser.Sound)
+- Create accessibility options
+
+### Phase 9: Content Expansion
 - Expand word lists to 100+ words
-- Test word-obstacle pairings
-- Balance difficulty curve
-- Add compound phrases
+- Test and balance word-obstacle pairings
+- Fine-tune difficulty curve progression
+- Add compound phrases for advanced tier
 - Create word introduction system
-- Test with target age group
+- Playtest with target age group
 
 ## Technical Considerations
 
 ### Performance
-- Canvas rendering only (no DOM manipulation during game)
-- Object pooling for obstacles/signs
-- Efficient collision detection (only check active lane)
-- Lazy sign spawning (only when needed)
-- Clean up off-screen objects
+- **WebGL Rendering**: Phaser uses WebGL by default (fallback to Canvas)
+- **Object Pooling**: Reuse obstacle/sign objects (Phaser Groups)
+- **Efficient Culling**: Phaser automatically culls off-screen objects
+- **Lazy Spawning**: Only spawn objects when entering camera view range
+- **Asset Management**: Minimal assets (vector graphics via Phaser.Graphics)
+- **Update Optimization**: Only check collisions for active obstacles
+
+### Phaser-Specific Optimizations
+- Use `Phaser.GameObjects.Group` for object pooling
+- Enable `skipUpdate: true` for static background elements
+- Use `setScrollFactor(0)` for fixed HUD elements
+- Leverage `this.physics.world.collide()` instead of manual checks
+- Cache frequently used calculations (lane positions)
 
 ### Accessibility
-- High contrast text on signs
-- Minimum font size requirements
-- Color-blind friendly palette
-- Keyboard controls (arrow keys)
-- Adjustable speed settings
+- High contrast text on signs (WCAG AA compliance)
+- Minimum 48px font size for readability
+- Color-blind friendly palette (tested with simulators)
+- Keyboard-only controls (arrow keys, spacebar, enter)
+- Adjustable speed settings (slow, normal, fast modes)
+- Optional text-to-speech for signs (Web Speech API)
 
 ### State Management
-- React state for UI (menu, game over, settings)
-- Game state in refs (player, obstacles, signs)
-- localStorage for high scores
-- No global state needed (simple game)
+- **React State**: UI layer (menu visibility, settings, high scores)
+- **Phaser Registry**: Game state shared across scenes
+- **Scene Data**: Pass data between scenes (score, distance)
+- **localStorage**: Persistent high scores and settings
+- **Event Emitters**: Communication between Phaser and React
+
+**React-Phaser Bridge:**
+```typescript
+// Emit events from Phaser to React
+this.events.emit('scoreUpdate', score);
+
+// Listen in React component
+useEffect(() => {
+  const game = phaserRef.current;
+  game.events.on('scoreUpdate', setScore);
+  return () => game.events.off('scoreUpdate', setScore);
+}, []);
+```
 
 ### Input Handling
-- Arrow keys for lane switching
-- Spacebar for pause
-- Enter for restart
-- Touch/swipe support (mobile future)
+- **Phaser Input Plugin**: `this.input.keyboard.createCursorKeys()`
+- **Arrow Keys**: Left/Right for lane switching
+- **Spacebar**: Pause/unpause game
+- **Enter**: Restart after game over
+- **Touch Support**: Future - swipe gestures via Phaser touch input
+- **Keyboard State Polling**: Check in update() loop for responsiveness
 
 ### Collision Detection
-- Lane-based (not pixel-perfect)
-- Check player lane vs obstacle lane
-- Buffer zone (50px before/after obstacle)
-- Immediate failure on match
+- **Lane-Based Logic**: Simple integer comparison (playerLane === obstacleLane)
+- **Phaser Overlap**: `this.physics.add.overlap(player, obstacleGroup, crashHandler)`
+- **Distance Check**: Only check obstacles within 50px of player Y position
+- **Early Exit**: Stop checking after first collision detected
+- **No Pixel-Perfect**: Unnecessary for our lane-based gameplay
+
+**Collision Pseudo-code:**
+```typescript
+update() {
+  this.obstacles.children.each((obstacle: Obstacle) => {
+    if (Math.abs(obstacle.y - this.player.y) < 50) {
+      if (obstacle.lane === this.player.currentLane) {
+        this.handleCrash();
+      }
+    }
+  });
+}
+```
 
 ## Content Design Notes
 
@@ -404,23 +550,146 @@ word-reader-downhill/
 
 ---
 
-## Quick Tech Stack
+## Modern Tech Stack (2025)
 
-- React 18+
-- HTML5 Canvas
-- Vanilla JavaScript (game classes)
-- localStorage (persistence)
-- No external game engines
-- No physics library needed (simple kinematics)
+### Core Dependencies
+```json
+{
+  "dependencies": {
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "phaser": "^3.80.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.0",
+    "typescript": "^5.5.0",
+    "vite": "^5.4.0"
+  }
+}
+```
+
+### Project Initialization
+```bash
+# Create new Vite + React + TypeScript project
+npm create vite@latest word-reader-downhill -- --template react-ts
+cd word-reader-downhill
+
+# Install Phaser 3
+npm install phaser
+
+# Install dev dependencies (if not included)
+npm install -D typescript @types/node
+
+# Start development server
+npm run dev
+```
+
+### Key Libraries & Tools
+- **Phaser 3.80+** - Game framework (WebGL/Canvas rendering, physics, scenes)
+- **React 18+** - UI layer (menus, overlays, settings)
+- **TypeScript 5+** - Type safety and IntelliSense
+- **Vite 5+** - Fast build tool with HMR (Hot Module Replacement)
+- **localStorage** - Persistence (high scores, settings)
+- **Google Fonts** - Typography (Quicksand or Nunito for rounded sans-serif)
+
+### Browser Support
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- WebGL 2.0 required (Canvas fallback available)
 
 ## Content Requirements
 
-- 100+ single words (various categories)
-- 10+ obstacle types
-- 5+ sign visual styles
-- 3 difficulty tiers
-- Palette: 10-12 colors total
+- **Words**: 100+ single words across 4 categories (directional, hazards, actions, modifiers)
+- **Obstacle Types**: 10+ (rock, tree, gap, branch, ice, log, cliff, etc.)
+- **Sign Styles**: 5+ visual variations (warning, action, directional, etc.)
+- **Difficulty Tiers**: 3 (beginner, intermediate, advanced)
+- **Color Palette**: 10-12 subdued pastel colors
+- **Fonts**: 1-2 rounded sans-serif families (light, regular, semibold)
+
+## Development Workflow
+
+### Setup Phase
+1. Initialize Vite + React + TypeScript
+2. Install Phaser 3
+3. Create basic project structure (scenes, objects, managers)
+4. Set up Phaser config with pastels palette
+
+### Core Loop Phase
+5. Build MainScene with auto-scroll
+6. Implement lane system and player movement
+7. Add obstacles with collision detection
+8. Create sign system with word pairing
+
+### Content Phase
+9. Build word lists (100+ words)
+10. Implement difficulty scaling
+11. Add scoring and progression
+12. Create React UI (menu, game over, settings)
+
+### Polish Phase
+13. Refine visuals (thin lines, gentle animations)
+14. Add parallax backgrounds
+15. Implement sound effects (optional)
+16. Playtest and balance difficulty
 
 ---
 
-*Plan ready for prototyping - focus on core loop first (movement + signs + obstacles), then expand word lists and polish visuals.*
+## Why This Stack?
+
+**Phaser 3 vs Custom Canvas:**
+- ✅ Built-in physics, collision, tweens, particles
+- ✅ Scene management (no manual state routing)
+- ✅ Massive community and documentation
+- ✅ Performance optimized (WebGL acceleration)
+- ✅ Official React integration examples
+
+**TypeScript vs JavaScript:**
+- ✅ Catch bugs at compile time
+- ✅ Better IntelliSense and autocomplete
+- ✅ Self-documenting code (interfaces, types)
+- ✅ Easier refactoring as project grows
+
+**Vite vs Create React App:**
+- ✅ 10-100x faster dev server startup
+- ✅ Instant HMR (Hot Module Replacement)
+- ✅ Better tree-shaking and build optimization
+- ✅ Modern tooling (ESBuild, Rollup)
+- ✅ CRA is deprecated/unmaintained
+
+---
+
+## Quick Reference
+
+**Start Development:**
+```bash
+npm run dev
+```
+
+**Build for Production:**
+```bash
+npm run build
+```
+
+**Preview Production Build:**
+```bash
+npm run preview
+```
+
+**Project Structure:**
+- `src/game/scenes/` - Phaser scenes (MainScene, MenuScene, etc.)
+- `src/game/objects/` - Game entities (Player, Obstacle, Sign)
+- `src/game/managers/` - Logic systems (WordManager, ScoreManager)
+- `src/components/` - React UI components
+- `src/data/` - Static content (word lists, theme)
+
+**Key Files:**
+- `src/game/config.ts` - Phaser configuration
+- `src/components/PhaserGame.tsx` - Phaser container component
+- `src/game/scenes/MainScene.ts` - Primary game logic
+- `src/data/wordLists.ts` - Word content
+- `src/data/theme.ts` - Color palette
+
+---
+
+*Plan ready for modern prototyping - Phaser 3 handles the heavy lifting, allowing focus on word mechanics and gentle aesthetics.*
