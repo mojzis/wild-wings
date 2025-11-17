@@ -100,11 +100,11 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
     }
   };
 
-  // Load saved gravity setting
+  // Load saved flight sensitivity setting
   useEffect(() => {
-    const savedGravity = localStorage.getItem('wildWingsGravity');
-    if (savedGravity !== null) {
-      Physics.GRAVITY = parseFloat(savedGravity);
+    const savedSensitivity = localStorage.getItem('wildWingsFlightSensitivity');
+    if (savedSensitivity !== null) {
+      Physics.sensitivity = parseFloat(savedSensitivity);
     }
   }, []);
 

@@ -4,11 +4,22 @@
  */
 
 const Physics = {
-  // Gravity pulls the bird down (adjustable via settings)
-  GRAVITY: 0.15,
+  // Base values for physics (scaled by sensitivity)
+  BASE_GRAVITY: 0.20,
+  BASE_FLAP_STRENGTH: -8,
 
-  // Flap strength pushes the bird up (negative because up is negative Y)
-  FLAP_STRENGTH: -6,
+  // Flight sensitivity multiplier (0.5 = easy, 1.0 = normal, 1.5 = hard)
+  // This scales both gravity and flap strength to keep controls balanced
+  sensitivity: 0.75,
+
+  // Computed values (updated when sensitivity changes)
+  get GRAVITY() {
+    return this.BASE_GRAVITY * this.sensitivity;
+  },
+
+  get FLAP_STRENGTH() {
+    return this.BASE_FLAP_STRENGTH * this.sensitivity;
+  },
 
   // Terminal velocity - maximum falling speed
   TERMINAL_VELOCITY: 6,

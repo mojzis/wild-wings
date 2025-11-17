@@ -1,36 +1,36 @@
 /**
  * Settings.jsx
- * Settings modal for adjusting game parameters like gravity
+ * Settings modal for adjusting game parameters like flight sensitivity
  */
 
 import React, { useState, useEffect } from 'react';
 import Physics from '../game/Physics';
 
 const Settings = ({ isOpen, onClose }) => {
-  const [gravity, setGravity] = useState(Physics.GRAVITY);
+  const [sensitivity, setSensitivity] = useState(Physics.sensitivity);
 
   // Load saved settings from localStorage
   useEffect(() => {
-    const savedGravity = localStorage.getItem('wildWingsGravity');
-    if (savedGravity !== null) {
-      const gravityValue = parseFloat(savedGravity);
-      setGravity(gravityValue);
-      Physics.GRAVITY = gravityValue;
+    const savedSensitivity = localStorage.getItem('wildWingsFlightSensitivity');
+    if (savedSensitivity !== null) {
+      const sensitivityValue = parseFloat(savedSensitivity);
+      setSensitivity(sensitivityValue);
+      Physics.sensitivity = sensitivityValue;
     }
   }, []);
 
-  const handleGravityChange = (e) => {
-    const newGravity = parseFloat(e.target.value);
-    setGravity(newGravity);
-    Physics.GRAVITY = newGravity;
-    localStorage.setItem('wildWingsGravity', newGravity.toString());
+  const handleSensitivityChange = (e) => {
+    const newSensitivity = parseFloat(e.target.value);
+    setSensitivity(newSensitivity);
+    Physics.sensitivity = newSensitivity;
+    localStorage.setItem('wildWingsFlightSensitivity', newSensitivity.toString());
   };
 
   const resetToDefault = () => {
-    const defaultGravity = 0.15;
-    setGravity(defaultGravity);
-    Physics.GRAVITY = defaultGravity;
-    localStorage.setItem('wildWingsGravity', defaultGravity.toString());
+    const defaultSensitivity = 0.75;
+    setSensitivity(defaultSensitivity);
+    Physics.sensitivity = defaultSensitivity;
+    localStorage.setItem('wildWingsFlightSensitivity', defaultSensitivity.toString());
   };
 
   if (!isOpen) return null;
@@ -42,26 +42,27 @@ const Settings = ({ isOpen, onClose }) => {
 
         <div style={styles.settingGroup}>
           <label style={styles.label}>
-            Gravity: <span style={styles.value}>{gravity.toFixed(2)}</span>
+            Flight Sensitivity: <span style={styles.value}>{sensitivity.toFixed(2)}</span>
           </label>
           <input
             type="range"
-            min="0.05"
-            max="0.5"
-            step="0.01"
-            value={gravity}
-            onChange={handleGravityChange}
+            min="0.5"
+            max="1.5"
+            step="0.05"
+            value={sensitivity}
+            onChange={handleSensitivityChange}
             style={styles.slider}
           />
           <div style={styles.sliderLabels}>
-            <span style={styles.labelText}>Easier (Less)</span>
-            <span style={styles.labelText}>Harder (More)</span>
+            <span style={styles.labelText}>Easier (Gentle)</span>
+            <span style={styles.labelText}>Harder (Responsive)</span>
           </div>
         </div>
 
         <div style={styles.description}>
-          <p>Lower gravity makes it easier to stay airborne and avoid obstacles.</p>
-          <p>Higher gravity makes the game more challenging.</p>
+          <p>Lower sensitivity makes flight more forgiving with gentler gravity and softer flaps.</p>
+          <p>Higher sensitivity makes flight more responsive and challenging.</p>
+          <p>This balances both gravity and flap strength to keep controls smooth.</p>
         </div>
 
         <div style={styles.buttonContainer}>
