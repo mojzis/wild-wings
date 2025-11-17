@@ -197,8 +197,8 @@ describe('AbilitySystem', () => {
       // Clear any existing particles
       player.particles = [];
 
-      // Update player multiple times
-      for (let i = 0; i < 10; i++) {
+      // Update player multiple times (more iterations to account for 30% random chance)
+      for (let i = 0; i < 50; i++) {
         player.update(800, 600);
       }
 
