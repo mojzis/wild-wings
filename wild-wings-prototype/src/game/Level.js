@@ -145,6 +145,118 @@ class Level {
   }
 
   /**
+   * Generate random branch (obstacle) positions spread throughout the level
+   * @param {number} count - Number of branches to generate
+   * @param {number} startX - Minimum X position
+   * @param {number} endX - Maximum X position
+   * @param {number} minWidth - Minimum branch width
+   * @param {number} maxWidth - Maximum branch width
+   * @param {number} minHeight - Minimum branch height
+   * @param {number} maxHeight - Maximum branch height
+   * @returns {Array} Array of {x, y, width, height} obstacle definitions
+   */
+  generateRandomBranchPositions(count, startX, endX, minWidth, maxWidth, minHeight, maxHeight) {
+    const branches = [];
+    const minY = 50; // Minimum Y position (avoid very top)
+    const maxY = this.height - 200; // Maximum Y position (avoid ground)
+    const minHorizontalGap = 100; // Minimum horizontal gap for navigation
+    const minVerticalGap = 120; // Minimum vertical gap between overlapping branches
+    const safeZoneBuffer = 150; // Buffer around safe zones
+    const startBuffer = 250; // Buffer from start position
+    const endBuffer = 250; // Buffer from end position
+
+    let attempts = 0;
+    const maxAttempts = count * 100; // More attempts for complex placement
+
+    while (branches.length < count && attempts < maxAttempts) {
+      attempts++;
+
+      // Generate random dimensions
+      const width = minWidth + Math.random() * (maxWidth - minWidth);
+      const height = minHeight + Math.random() * (maxHeight - minHeight);
+
+      // Generate random position
+      const x = startX + Math.random() * (endX - startX);
+      const y = minY + Math.random() * (maxY - minY);
+
+      // Skip if too close to start or end
+      if (x < startX + startBuffer || x + width > endX - endBuffer) {
+        continue;
+      }
+
+      // Skip if overlapping with safe zones
+      let overlapsWithSafeZone = false;
+      for (let zone of this.safeZones) {
+        const distX = Math.abs((x + width / 2) - (zone.x + zone.width / 2));
+        const distY = Math.abs((y + height / 2) - (zone.y + zone.height / 2));
+        if (distX < (width / 2 + zone.width / 2 + safeZoneBuffer) &&
+            distY < (height / 2 + zone.height / 2 + safeZoneBuffer)) {
+          overlapsWithSafeZone = true;
+          break;
+        }
+      }
+
+      if (overlapsWithSafeZone) continue;
+
+      // Check spacing from existing branches to maintain playability
+      let hasValidGap = true;
+      for (let other of branches) {
+        const horizontalOverlap = !(x + width < other.x || x > other.x + other.width);
+        const verticalOverlap = !(y + height < other.y || y > other.y + other.height);
+
+        // If branches overlap horizontally, ensure sufficient vertical gap
+        if (horizontalOverlap) {
+          const verticalGap = Math.min(
+            Math.abs(y - (other.y + other.height)),
+            Math.abs((y + height) - other.y)
+          );
+          if (verticalGap < minVerticalGap) {
+            hasValidGap = false;
+            break;
+          }
+        }
+
+        // If branches are close horizontally, ensure some navigable space
+        const horizontalGap = Math.min(
+          Math.abs(x - (other.x + other.width)),
+          Math.abs((x + width) - other.x)
+        );
+        if (horizontalGap > 0 && horizontalGap < minHorizontalGap && verticalOverlap) {
+          hasValidGap = false;
+          break;
+        }
+      }
+
+      if (!hasValidGap) continue;
+
+      // Position is valid, add branch
+      branches.push({ x, y, width, height });
+    }
+
+    // If we couldn't generate enough branches, fill remaining with safer positions
+    // Distribute them evenly across the level with guaranteed gaps
+    while (branches.length < count) {
+      const segmentWidth = (endX - startX - startBuffer - endBuffer) / count;
+      const index = branches.length;
+      const segmentX = startX + startBuffer + segmentWidth * index;
+
+      // Alternate between top and bottom placement for guaranteed gaps
+      const isTop = index % 2 === 0;
+      const width = minWidth + Math.random() * (maxWidth - minWidth);
+      const height = minHeight + Math.random() * (maxHeight - minHeight);
+
+      branches.push({
+        x: segmentX + Math.random() * (segmentWidth * 0.3),
+        y: isTop ? minY + Math.random() * 100 : maxY - Math.random() * 100,
+        width: width,
+        height: height
+      });
+    }
+
+    return branches;
+  }
+
+  /**
    * Create the level layout with obstacles and collectibles
    */
   createLevelLayout() {
@@ -168,37 +280,19 @@ class Level {
       activated: false
     }];
 
-    // Create obstacles for Level 1 (easy to medium difficulty)
-    this.obstacles = [
-      // Starting area - easy obstacles
-      new Obstacle(300, 80, 70, 100),
-      new Obstacle(250, 400, 80, 120),
+    // Create obstacles for Level 1 (easy to medium difficulty) - 17 total, randomized positions
+    const numBranches = 17;
+    const branchData = this.generateRandomBranchPositions(
+      numBranches,
+      200,           // startX
+      this.width,    // endX
+      60,            // minWidth
+      80,            // maxWidth
+      100,           // minHeight
+      150            // maxHeight
+    );
 
-      // Early section
-      new Obstacle(500, 150, 60, 120),
-      new Obstacle(520, 350, 75, 150),
-
-      // Before safe zone
-      new Obstacle(750, 50, 65, 140),
-      new Obstacle(800, 420, 70, 100),
-      new Obstacle(950, 200, 80, 130),
-
-      // Around safe zone (gaps for entry/exit)
-      new Obstacle(1050, 80, 60, 100),
-      new Obstacle(1450, 100, 70, 120),
-      new Obstacle(1500, 380, 75, 140),
-
-      // After safe zone - medium difficulty
-      new Obstacle(1700, 150, 65, 150),
-      new Obstacle(1750, 400, 80, 120),
-      new Obstacle(1900, 250, 70, 100),
-      new Obstacle(2000, 90, 75, 140),
-      new Obstacle(2050, 440, 70, 100),
-
-      // End section
-      new Obstacle(2200, 180, 65, 130),
-      new Obstacle(2250, 380, 80, 150)
-    ];
+    this.obstacles = branchData.map(b => new Obstacle(b.x, b.y, b.width, b.height));
 
     // Create collectibles (wind feathers) - 15 total, randomized positions
     const numFeathers = 15;
@@ -230,41 +324,19 @@ class Level {
       }
     ];
 
-    // Create obstacles for Level 2 (harder - 23 obstacles with tighter gaps)
-    this.obstacles = [
-      // Starting area - tighter gaps immediately
-      new Obstacle(250, 60, 70, 140),
-      new Obstacle(280, 380, 75, 160),
-      new Obstacle(400, 200, 65, 100),
+    // Create obstacles for Level 2 (harder - 23 obstacles with tighter gaps) - randomized positions
+    const numBranches = 23;
+    const branchData = this.generateRandomBranchPositions(
+      numBranches,
+      200,           // startX
+      this.width,    // endX
+      60,            // minWidth
+      85,            // maxWidth (slightly larger for difficulty)
+      120,           // minHeight (taller branches)
+      180            // maxHeight (taller branches)
+    );
 
-      // Early section - vertical challenges
-      new Obstacle(550, 50, 60, 180),
-      new Obstacle(580, 400, 70, 150),
-      new Obstacle(700, 150, 75, 120),
-      new Obstacle(720, 350, 80, 140),
-
-      // Before first safe zone - requires abilities
-      new Obstacle(850, 80, 65, 160),
-      new Obstacle(900, 420, 70, 120),
-      new Obstacle(1000, 200, 60, 140),
-      new Obstacle(1250, 100, 70, 130),
-
-      // Between safe zones - challenging corridors
-      new Obstacle(1400, 50, 65, 170),
-      new Obstacle(1450, 400, 75, 150),
-      new Obstacle(1600, 120, 70, 140),
-      new Obstacle(1650, 380, 80, 160),
-      new Obstacle(1800, 180, 65, 120),
-      new Obstacle(1850, 350, 70, 140),
-      new Obstacle(1950, 80, 75, 150),
-      new Obstacle(2000, 420, 70, 130),
-      new Obstacle(2100, 200, 65, 130),
-
-      // After second safe zone - final challenge
-      new Obstacle(2400, 100, 70, 160),
-      new Obstacle(2450, 400, 75, 140),
-      new Obstacle(2600, 150, 65, 180)
-    ];
+    this.obstacles = branchData.map(b => new Obstacle(b.x, b.y, b.width, b.height));
 
     // Create collectibles - 20 feathers, randomized positions
     const numFeathers = 20;
