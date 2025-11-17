@@ -25,6 +25,7 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
   const cameraRef = useRef({ x: 0 });
   const keysRef = useRef({});
   const animationFrameRef = useRef(null);
+  const handlingCollisionRef = useRef(false);
 
   // Canvas dimensions
   const CANVAS_WIDTH = 800;
@@ -82,6 +83,12 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
      * Handle collision with obstacle
      */
     const handleCollision = () => {
+      // Prevent multiple simultaneous collision handlers
+      if (handlingCollisionRef.current) {
+        return;
+      }
+
+      handlingCollisionRef.current = true;
       const player = playerRef.current;
       const level = levelRef.current;
       const abilitySystem = abilitySystemRef.current;
@@ -111,6 +118,8 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
         cameraRef.current.x = 0;
         // Reset game over state to restart the game
         setGameOver(false);
+        // Reset collision flag to allow new game to detect collisions
+        handlingCollisionRef.current = false;
       }, 100);
     };
 
