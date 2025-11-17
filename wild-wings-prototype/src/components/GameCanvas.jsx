@@ -739,7 +739,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: '100vh',
-    backgroundColor: '#E8D5E8',  // Soft lavender background
+    backgroundColor: '#B0E0E6',  // Light blue background
     padding: '20px'
   },
   containerFullscreen: {
