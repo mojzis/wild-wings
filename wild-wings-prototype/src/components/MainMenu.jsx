@@ -130,7 +130,7 @@ const MainMenu = ({ onStartLevel }) => {
 const styles = {
   container: {
     minHeight: '100vh',
-    backgroundColor: '#E8D5E8',  // Soft lavender background
+    backgroundColor: '#B0E0E6',  // Light blue background
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
