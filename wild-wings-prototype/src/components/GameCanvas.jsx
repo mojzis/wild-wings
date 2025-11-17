@@ -22,6 +22,8 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
   const [levelComplete, setLevelComplete] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showGameOverOverlay, setShowGameOverOverlay] = useState(false);
+  const [gameOverStats, setGameOverStats] = useState({ feathers: 0, totalFeathers: 0, time: 0 });
 
   // Game state refs (using refs to avoid re-renders in game loop)
   const playerRef = useRef(null);
@@ -54,6 +56,35 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
     }
     setShowElderEncounter(false);
     setCurrentElderEncounter(null);
+  };
+
+  /**
+   * Handle game restart after game over
+   */
+  const handleRestart = () => {
+    const player = playerRef.current;
+    const level = levelRef.current;
+    const abilitySystem = abilitySystemRef.current;
+
+    // Reset player
+    if (player) {
+      player.reset(100, CANVAS_HEIGHT / 2 - 20);
+    }
+    // Reset level
+    if (level) {
+      level.reset();
+    }
+    // Reset ability system (cooldowns, but keep unlocked abilities)
+    if (abilitySystem) {
+      abilitySystem.reset();
+    }
+    // Reset camera
+    cameraRef.current.x = 0;
+    // Reset game over state to restart the game
+    setGameOver(false);
+    setShowGameOverOverlay(false);
+    // Reset collision flag to allow new game to detect collisions
+    handlingCollisionRef.current = false;
   };
 
   /**
@@ -148,35 +179,23 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
       handlingCollisionRef.current = true;
       const player = playerRef.current;
       const level = levelRef.current;
-      const abilitySystem = abilitySystemRef.current;
 
       // Trigger visual feedback
       if (player) {
         player.triggerCollisionFlash();
       }
 
-      // Small delay to show flash before alert
+      // Small delay to show flash before showing game over overlay
       setTimeout(() => {
         setGameOver(true);
-        alert(`Game Over!\n\nFeathers: ${level.feathersCollected}/${level.totalFeathers}\nTime: ${level.elapsedTime}s\n\nClick OK to restart.`);
-        // Reset player
-        if (player) {
-          player.reset(100, CANVAS_HEIGHT / 2 - 20);
-        }
-        // Reset level
-        if (level) {
-          level.reset();
-        }
-        // Reset ability system (cooldowns, but keep unlocked abilities)
-        if (abilitySystem) {
-          abilitySystem.reset();
-        }
-        // Reset camera
-        cameraRef.current.x = 0;
-        // Reset game over state to restart the game
-        setGameOver(false);
-        // Reset collision flag to allow new game to detect collisions
-        handlingCollisionRef.current = false;
+        // Store game over stats
+        setGameOverStats({
+          feathers: level.feathersCollected,
+          totalFeathers: level.totalFeathers,
+          time: level.elapsedTime
+        });
+        // Show game over overlay
+        setShowGameOverOverlay(true);
       }, 100);
     };
 
@@ -517,6 +536,13 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
       // Spacebar handling depends on level state
       if (e.key === ' ') {
         e.preventDefault();
+
+        // If game over overlay is showing, restart the game
+        if (showGameOverOverlay) {
+          handleRestart();
+          return;
+        }
+
         if (!gameOver && level && player) {
           // If elder encounter is showing, dismiss it
           if (showElderEncounter) {
@@ -750,6 +776,36 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
         </div>
       )}
 
+      {/* Game Over Overlay */}
+      {showGameOverOverlay && (
+        <div style={gameOverStyles.overlay}>
+          <div style={gameOverStyles.menu}>
+            <h2 style={gameOverStyles.title}>Game Over!</h2>
+            <div style={gameOverStyles.statsContainer}>
+              <div style={gameOverStyles.statItem}>
+                <span style={gameOverStyles.statLabel}>Feathers:</span>
+                <span style={gameOverStyles.statValue}>{gameOverStats.feathers}/{gameOverStats.totalFeathers}</span>
+              </div>
+              <div style={gameOverStyles.statItem}>
+                <span style={gameOverStyles.statLabel}>Time:</span>
+                <span style={gameOverStyles.statValue}>{gameOverStats.time}s</span>
+              </div>
+            </div>
+            <div style={gameOverStyles.buttonContainer}>
+              <button
+                style={gameOverStyles.button}
+                onClick={handleRestart}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#8A9A7D'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#9BAA8C'}
+              >
+                Restart (SPACE)
+              </button>
+            </div>
+            <p style={gameOverStyles.hint}>Press SPACE to restart</p>
+          </div>
+        </div>
+      )}
+
       {/* Settings Modal */}
       <Settings isOpen={showSettings} onClose={() => setShowSettings(false)} />
     </div>
@@ -896,6 +952,85 @@ const pauseStyles = {
   },
   tertiaryButton: {
     backgroundColor: '#8BA3B8'  // Dusty blue
+  },
+  hint: {
+    color: '#9BA3A8',  // Soft gray
+    fontSize: '14px',
+    margin: '0',
+    fontStyle: 'italic'
+  }
+};
+
+const gameOverStyles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(217, 165, 160, 0.8)',  // Soft coral overlay with more opacity
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2000
+  },
+  menu: {
+    backgroundColor: '#F5F0E8',  // Soft off-white
+    borderRadius: '20px',
+    padding: '40px',
+    boxShadow: '0 10px 40px rgba(107, 122, 122, 0.4)',  // Slightly stronger shadow
+    textAlign: 'center',
+    minWidth: '400px',
+    border: '3px solid #D9A5A0'  // Soft coral border
+  },
+  title: {
+    color: '#B8625A',  // Muted coral-red
+    fontSize: '56px',
+    margin: '0 0 30px 0',
+    fontWeight: 'bold',
+    textShadow: '2px 2px 4px rgba(184, 98, 90, 0.2)'
+  },
+  statsContainer: {
+    backgroundColor: 'rgba(232, 213, 232, 0.3)',  // Soft lavender background
+    borderRadius: '12px',
+    padding: '20px',
+    marginBottom: '30px',
+    border: '2px solid #C8B8C8'  // Soft mauve border
+  },
+  statItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '10px 20px',
+    fontSize: '20px'
+  },
+  statLabel: {
+    color: '#6B7A7A',  // Muted slate
+    fontWeight: 'bold',
+    marginRight: '20px'
+  },
+  statValue: {
+    color: '#D9B382',  // Soft amber
+    fontWeight: 'bold',
+    fontSize: '24px'
+  },
+  buttonContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '15px',
+    marginBottom: '20px'
+  },
+  button: {
+    backgroundColor: '#9BAA8C',  // Muted moss green
+    color: '#F5F0E8',  // Soft off-white
+    border: 'none',
+    padding: '15px 30px',
+    borderRadius: '30px',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 4px 8px rgba(155, 170, 140, 0.3)'  // Soft shadow
   },
   hint: {
     color: '#9BA3A8',  // Soft gray
