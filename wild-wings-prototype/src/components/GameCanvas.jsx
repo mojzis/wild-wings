@@ -269,35 +269,9 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
         player.moveDown();
       }
 
-      // Update player physics (use level dimensions instead of canvas)
-      player.update = function() {
-        // Apply gravity
-        this.velocityY += Physics.GRAVITY;
-        this.velocityY = Math.min(this.velocityY, Physics.TERMINAL_VELOCITY);
-
-        // Update position
-        this.y += this.velocityY;
-        this.x += this.velocityX;
-
-        // Keep player within horizontal bounds of level
-        if (this.x < 0) {
-          this.x = 0;
-        }
-        if (this.x + this.width > level.width) {
-          this.x = level.width - this.width;
-        }
-
-        // Keep player within vertical bounds
-        if (this.y < 0) {
-          this.y = 0;
-          this.velocityY = 0;
-        }
-        if (this.y + this.height > CANVAS_HEIGHT) {
-          this.y = CANVAS_HEIGHT - this.height;
-          this.velocityY = 0;
-        }
-      };
-      player.update();
+      // Update player physics (use level dimensions for horizontal bounds)
+      // The original Player.update() method is ability-aware and handles all physics correctly
+      player.update(level.width, CANVAS_HEIGHT);
 
       // Update camera
       updateCamera();
