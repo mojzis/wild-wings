@@ -4,8 +4,8 @@
  */
 
 const Physics = {
-  // Gravity pulls the bird down
-  GRAVITY: 0.25,
+  // Gravity pulls the bird down (adjustable via settings)
+  GRAVITY: 0.15,
 
   // Flap strength pushes the bird up (negative because up is negative Y)
   FLAP_STRENGTH: -6,
