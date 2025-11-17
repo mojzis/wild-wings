@@ -12,11 +12,13 @@ import gameStateManager from '../game/GameStateManager';
 
 const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
   const canvasRef = useRef(null);
+  const containerRef = useRef(null);
   const [gameOver, setGameOver] = useState(false);
   const [showElderEncounter, setShowElderEncounter] = useState(false);
   const [currentElderEncounter, setCurrentElderEncounter] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const [levelComplete, setLevelComplete] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Game state refs (using refs to avoid re-renders in game loop)
   const playerRef = useRef(null);
@@ -49,6 +51,28 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
     }
     setShowElderEncounter(false);
     setCurrentElderEncounter(null);
+  };
+
+  /**
+   * Toggle fullscreen mode
+   */
+  const toggleFullscreen = () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    if (!document.fullscreenElement) {
+      container.requestFullscreen().then(() => {
+        setIsFullscreen(true);
+      }).catch(err => {
+        console.error('Error attempting to enable fullscreen:', err);
+      });
+    } else {
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false);
+      }).catch(err => {
+        console.error('Error attempting to exit fullscreen:', err);
+      });
+    }
   };
 
   // Initialize game
@@ -438,6 +462,13 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
         return;
       }
 
+      // F key to toggle fullscreen
+      if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+        return;
+      }
+
       // Don't process other keys if paused
       if (isPaused) return;
 
@@ -523,9 +554,15 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
       }
     };
 
+    // Fullscreen change listener
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
     // Add event listeners
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
 
     // Start game loop
     gameLoop();
@@ -534,6 +571,7 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -566,8 +604,19 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
   }, [levelNumber, levelComplete]);
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Wild Wings</h1>
+    <div ref={containerRef} style={styles.container}>
+      <div style={styles.header}>
+        <h1 style={styles.title}>Wild Wings</h1>
+        <button
+          onClick={toggleFullscreen}
+          style={styles.fullscreenButton}
+          onMouseOver={(e) => e.target.style.backgroundColor = '#1F5A7A'}
+          onMouseOut={(e) => e.target.style.backgroundColor = '#2C7DA0'}
+          title="Toggle Fullscreen (F)"
+        >
+          {isFullscreen ? '⊗' : '⛶'}
+        </button>
+      </div>
       <canvas
         ref={canvasRef}
         width={CANVAS_WIDTH}
@@ -579,6 +628,7 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
         <p>Use ARROW KEYS to move left, right, or descend</p>
         <p>Collect golden feathers and reach the safe zone!</p>
         <p>Avoid the brown tree branches!</p>
+        <p>Press F to toggle fullscreen mode</p>
       </div>
 
       {/* Elder Encounter Overlay */}
@@ -634,12 +684,34 @@ const styles = {
     backgroundColor: '#2C3E50',
     padding: '20px'
   },
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '20px',
+    marginBottom: '20px'
+  },
   title: {
     color: '#ECF0F1',
     fontSize: '48px',
-    marginBottom: '20px',
+    margin: '0',
     fontFamily: 'Arial, sans-serif',
     textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+  },
+  fullscreenButton: {
+    backgroundColor: '#2C7DA0',
+    color: '#FFFFFF',
+    border: 'none',
+    borderRadius: '8px',
+    width: '50px',
+    height: '50px',
+    fontSize: '24px',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   canvas: {
     border: '4px solid #34495E',
