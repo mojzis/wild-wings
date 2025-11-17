@@ -54,24 +54,46 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
   };
 
   /**
-   * Toggle fullscreen mode
+   * Toggle fullscreen mode with vendor prefix support
    */
   const toggleFullscreen = () => {
     const container = containerRef.current;
     if (!container) return;
 
-    if (!document.fullscreenElement) {
-      container.requestFullscreen().then(() => {
-        setIsFullscreen(true);
-      }).catch(err => {
-        console.error('Error attempting to enable fullscreen:', err);
-      });
+    // Check if already in fullscreen (with vendor prefixes)
+    const isInFullscreen = document.fullscreenElement ||
+                          document.webkitFullscreenElement ||
+                          document.mozFullScreenElement ||
+                          document.msFullscreenElement;
+
+    if (!isInFullscreen) {
+      // Request fullscreen with vendor prefix support
+      const requestFullscreen = container.requestFullscreen ||
+                               container.webkitRequestFullscreen ||
+                               container.mozRequestFullScreen ||
+                               container.msRequestFullscreen;
+
+      if (requestFullscreen) {
+        requestFullscreen.call(container).then(() => {
+          setIsFullscreen(true);
+        }).catch(err => {
+          console.error('Error attempting to enable fullscreen:', err);
+        });
+      }
     } else {
-      document.exitFullscreen().then(() => {
-        setIsFullscreen(false);
-      }).catch(err => {
-        console.error('Error attempting to exit fullscreen:', err);
-      });
+      // Exit fullscreen with vendor prefix support
+      const exitFullscreen = document.exitFullscreen ||
+                            document.webkitExitFullscreen ||
+                            document.mozCancelFullScreen ||
+                            document.msExitFullscreen;
+
+      if (exitFullscreen) {
+        exitFullscreen.call(document).then(() => {
+          setIsFullscreen(false);
+        }).catch(err => {
+          console.error('Error attempting to exit fullscreen:', err);
+        });
+      }
     }
   };
 
@@ -561,15 +583,24 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
       }
     };
 
-    // Fullscreen change listener
+    // Fullscreen change listener with vendor prefix support
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      const isInFullscreen = !!(document.fullscreenElement ||
+                               document.webkitFullscreenElement ||
+                               document.mozFullScreenElement ||
+                               document.msFullscreenElement);
+      setIsFullscreen(isInFullscreen);
     };
 
     // Add event listeners
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+
+    // Add fullscreen change listeners with vendor prefixes
     document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
     // Start game loop
     gameLoop();
@@ -579,6 +610,9 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -611,12 +645,24 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
   }, [levelNumber, levelComplete]);
 
   return (
-    <div ref={containerRef} style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>Wild Wings</h1>
+    <div ref={containerRef} style={{
+      ...styles.container,
+      ...(isFullscreen ? styles.containerFullscreen : {})
+    }}>
+      <div style={{
+        ...styles.header,
+        ...(isFullscreen ? styles.headerFullscreen : {})
+      }}>
+        <h1 style={{
+          ...styles.title,
+          ...(isFullscreen ? styles.titleFullscreen : {})
+        }}>Wild Wings</h1>
         <button
           onClick={toggleFullscreen}
-          style={styles.fullscreenButton}
+          style={{
+            ...styles.fullscreenButton,
+            ...(isFullscreen ? styles.fullscreenButtonInFullscreen : {})
+          }}
           onMouseOver={(e) => e.target.style.backgroundColor = '#6B8399'}
           onMouseOut={(e) => e.target.style.backgroundColor = '#8BA3B8'}
           title="Toggle Fullscreen (F)"
@@ -628,15 +674,20 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
         ref={canvasRef}
         width={CANVAS_WIDTH}
         height={CANVAS_HEIGHT}
-        style={styles.canvas}
+        style={{
+          ...styles.canvas,
+          ...(isFullscreen ? styles.canvasFullscreen : {})
+        }}
       />
-      <div style={styles.info}>
-        <p>Use SPACEBAR to flap and gain altitude</p>
-        <p>Use ARROW KEYS to move left, right, or descend</p>
-        <p>Collect golden feathers and reach the safe zone!</p>
-        <p>Avoid the brown tree branches!</p>
-        <p>Press F to toggle fullscreen mode</p>
-      </div>
+      {!isFullscreen && (
+        <div style={styles.info}>
+          <p>Use SPACEBAR to flap and gain altitude</p>
+          <p>Use ARROW KEYS to move left, right, or descend</p>
+          <p>Collect golden feathers and reach the safe zone!</p>
+          <p>Avoid the brown tree branches!</p>
+          <p>Press F to toggle fullscreen mode</p>
+        </div>
+      )}
 
       {/* Elder Encounter Overlay */}
       {showElderEncounter && currentElderEncounter && (
@@ -691,6 +742,12 @@ const styles = {
     backgroundColor: '#E8D5E8',  // Soft lavender background
     padding: '20px'
   },
+  containerFullscreen: {
+    padding: '0',
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: '#000000'
+  },
   header: {
     display: 'flex',
     alignItems: 'center',
@@ -698,12 +755,22 @@ const styles = {
     gap: '20px',
     marginBottom: '20px'
   },
+  headerFullscreen: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    marginBottom: '0',
+    zIndex: 1000
+  },
   title: {
     color: '#6B7A7A',  // Muted slate
     fontSize: '48px',
     margin: '0',
     fontFamily: 'Arial, sans-serif',
     textShadow: '2px 2px 4px rgba(232, 213, 232, 0.3)'  // Soft shadow
+  },
+  titleFullscreen: {
+    display: 'none'
   },
   fullscreenButton: {
     backgroundColor: '#8BA3B8',  // Dusty blue
@@ -720,11 +787,31 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center'
   },
+  fullscreenButtonInFullscreen: {
+    position: 'fixed',
+    top: '10px',
+    right: '10px',
+    backgroundColor: 'rgba(139, 163, 184, 0.8)',  // Dusty blue with transparency
+    zIndex: 1001
+  },
   canvas: {
     border: '4px solid #C8B8C8',  // Soft mauve border
     borderRadius: '8px',
     boxShadow: '0 8px 16px rgba(107, 122, 122, 0.2)',  // Very soft shadow
     backgroundColor: '#E8D5E8'  // Match background
+  },
+  canvasFullscreen: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '100vw',
+    height: '100vh',
+    maxWidth: '100vw',
+    maxHeight: '100vh',
+    objectFit: 'contain',
+    border: 'none',
+    borderRadius: '0'
   },
   info: {
     marginTop: '20px',
