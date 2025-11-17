@@ -11,7 +11,7 @@ This document provides comprehensive prompts and specifications for creating han
 
 #### 1. **Player Bird (The Blue Bird)**
 **Current:** Programmatically drawn blue ellipse with simple shapes
-**Prompt:** "A charming, hand-drawn blue bird character in side view, designed for a 2D side-scrolling game. The bird should have a plump, rounded body in a vibrant sky blue color (#4A90E2), with darker blue wings (#2E5F8A), an orange beak, and expressive cartoon eyes. Include subtle tail feathers. The style should be whimsical and sketch-like with visible pencil or ink strokes, giving it personality and warmth. Size: approximately 40x40 pixels at base size. Include both a neutral pose and a wing-flapping animation frame."
+**Prompt:** "A charming, hand-drawn blue bird character in side view, designed for a 2D side-scrolling game. The bird should have a plump, rounded body in a soft, muted dusty blue color (#8BA3B8), with darker muted blue wings (#6B8399), a soft amber/honey beak (#D9B382), and expressive cartoon eyes. Include subtle tail feathers. The style should be soft, watercolor-like with visible brush or ink strokes, giving it a gentle, peaceful quality. Size: approximately 40x40 pixels at base size. Include both a neutral pose and a wing-flapping animation frame."
 
 **Additional variations needed:**
 - Neutral flying pose
@@ -22,7 +22,7 @@ This document provides comprehensive prompts and specifications for creating han
 
 #### 2. **Tree Branches (Obstacles)**
 **Current:** Brown rectangles with simple texture lines
-**Prompt:** "Hand-drawn wooden tree branches for a forest-themed obstacle course. Each branch should look organic and natural with visible wood grain, knots, and texture. Style: sketch-like with pen or ink strokes, colored in rich brown tones (#8B4513 with darker shadows #654321). Create various sizes and shapes: some straight, some slightly curved, with natural imperfections. Dimensions: roughly 60-80 pixels wide by 100-150 pixels tall. The branches should look solid but inviting, not too threatening."
+**Prompt:** "Hand-drawn wooden tree branches for a forest-themed obstacle course. Each branch should look organic and natural with visible wood grain, knots, and texture. Style: soft watercolor with gentle brush strokes, colored in muted taupe/beige tones (#B09A8A with darker shadows #9B8578, optional highlight texture #C4B5A8). Create various sizes and shapes: some straight, some slightly curved, with natural imperfections. Dimensions: roughly 60-80 pixels wide by 100-150 pixels tall. The branches should look solid but inviting, not threatening."
 
 **Variations needed:**
 - 3-5 different branch shapes/sizes
@@ -33,7 +33,7 @@ This document provides comprehensive prompts and specifications for creating han
 
 #### 3. **Wind Feathers (Collectibles)**
 **Current:** Golden circles with sparkles
-**Prompt:** "Magical, hand-drawn feather collectible item with a whimsical, ethereal quality. The feather should be drawn in a sketch style with delicate, flowing lines. Color: golden yellow (#FFD700) with an orange glow (#FFA500). The feather should look light and airy, with a soft, detailed central shaft and wispy barbs. Add subtle sparkle elements around it to convey magic. Size: approximately 20x20 pixels. Style should match hand-drawn aesthetic with visible pen strokes and a mystical, enchanted appearance."
+**Prompt:** "Magical, hand-drawn feather collectible item with a whimsical, ethereal quality. The feather should be drawn in a soft watercolor style with delicate, flowing lines. Color: soft amber/honey (#D9B382) with a warmer beige glow (#C9A574). The feather should look light and airy, with a soft, detailed central shaft and wispy barbs. Add subtle sparkle elements in soft off-white (#F5F0E8) around it to convey gentle magic. Size: approximately 20x20 pixels. Style should be soft and peaceful with a watercolor aesthetic."
 
 **Animation frames:**
 - Resting state
@@ -46,7 +46,7 @@ This document provides comprehensive prompts and specifications for creating han
 
 #### 4. **Background Clouds**
 **Current:** Simple overlapping white circles
-**Prompt:** "Soft, hand-drawn clouds in a sketch or watercolor style. Clouds should be puffy and cartoonish with gentle, organic outlines - avoid perfect circles. Use white with subtle gray shading for depth. Style: loose, artistic strokes that look hand-painted or sketched. Create various sizes and shapes for parallax scrolling. The clouds should feel dreamy and peaceful, enhancing the sky atmosphere without being too prominent."
+**Prompt:** "Soft, hand-drawn clouds in a gentle watercolor style. Clouds should be puffy and organic with gentle, flowing outlines - avoid perfect circles. Use soft off-white (#F8F5F0) with very subtle warm shading for depth. Style: loose, delicate watercolor brush strokes. Create various sizes and shapes for parallax scrolling. The clouds should feel dreamy, peaceful, and barely visible against the pastel gradient sky - almost ethereal."
 
 **Variations needed:**
 - Small clouds (30-40px)
@@ -58,13 +58,13 @@ This document provides comprehensive prompts and specifications for creating han
 
 #### 5. **Safe Zone Platform**
 **Current:** Light green rectangle with border
-**Prompt:** "Hand-drawn floating rest platform that looks safe and welcoming. Design as a soft, cloud-like platform in light green (#90EE90) with a darker green border (#228B22). The platform should look magical and ethereal, like a soft resting place in the sky. Add wispy cloud textures and maybe small grass tufts or flowers. Include hand-lettered text 'SAFE ZONE' in a friendly, sketch-style font. Size: 120x80 pixels. The overall vibe should be peaceful and inviting."
+**Prompt:** "Hand-drawn floating rest platform that looks safe and welcoming. Design as a soft, cloud-like platform in soft mint green (#C8E6D0) with a muted moss green border (#9BAA8C). The platform should look magical and ethereal, like a soft resting place in the sky with watercolor wash. Add wispy cloud textures and maybe small delicate grass tufts or tiny flowers. Include hand-lettered text 'SAFE ZONE' in a gentle, watercolor-style font. Size: 120x80 pixels. The overall vibe should be peaceful, inviting, and gentle."
 
 ---
 
 #### 6. **Ground/Forest Floor**
 **Current:** Green rectangle with simple grass pattern
-**Prompt:** "Hand-drawn forest ground section showing lush grass and earth. The base should be forest green (#228B22) with lime green (#32CD32) grass tufts and blades on top. Style: sketch-like with visible pen or ink strokes. Include varied grass blade heights, small flowers, maybe tiny mushrooms or pebbles for detail. Height: 30 pixels, width: tileable pattern. The grass should look alive and organic, not uniform."
+**Prompt:** "Hand-drawn forest ground section showing gentle grass and earth. The base should be a muted sage green (#A8B5A0) with very soft off-white (#F8F5F0) or pale cream grass tufts and blades on top. Style: soft watercolor with gentle brush strokes. Include varied grass blade heights, subtle details like tiny flowers or gentle texture. Height: 30 pixels, width: tileable pattern. The grass should look peaceful, organic, and blend harmoniously with the soft color palette."
 
 **Pattern:** Should be tileable horizontally
 
@@ -76,29 +76,29 @@ This document provides comprehensive prompts and specifications for creating han
 These could remain simple or be enhanced:
 
 **Speed Boost Trail Particles:**
-**Prompt:** "Small, hand-drawn motion trail particles in blue tones (#4A90E2, #2E5F8A). Each particle should look like a small streak or droplet with a sketch-like quality. Size: 6-12 pixels. Style: quick, energetic brush strokes suggesting speed."
+**Prompt:** "Small, hand-drawn motion trail particles in muted blue tones (#8BA3B8, #6B8399). Each particle should look like a small streak or droplet with a soft watercolor quality. Size: 6-12 pixels. Style: gentle, flowing brush strokes suggesting graceful speed."
 
 **Hover Particles:**
-**Prompt:** "Tiny, magical floating particles in red-orange (#E94B3C) with a hand-drawn, sparkle-like quality. Each particle should be small (4-6px) circles or stars with loose, sketchy outlines."
+**Prompt:** "Tiny, magical floating particles in soft dusty rose (#D9A5A0) with a hand-drawn, sparkle-like quality. Each particle should be small (4-6px) circles or petals with loose, watercolor outlines. Very subtle and gentle."
 
 **Glide Particles:**
-**Prompt:** "Wind trail particles in green (#7ED321) and white, drawn as flowing lines or small leaf shapes. Size: 10-20 pixels long. Style: graceful, flowing strokes suggesting wind currents."
+**Prompt:** "Wind trail particles in soft sage green (#A8B89F) and soft off-white (#F5F0E8), drawn as flowing lines or small delicate leaf shapes. Size: 10-20 pixels long. Style: graceful, gentle watercolor strokes suggesting peaceful wind currents."
 
 ---
 
 ### **UI ELEMENTS** (Can remain digital or be hand-drawn)
 
 #### 8. **Feather Icon (UI)**
-**Prompt:** "Small hand-drawn feather icon for UI display, matching the collectible feather but simplified. Golden color, clear at small sizes (16-24px). Style: clean sketch with visible ink lines."
+**Prompt:** "Small hand-drawn feather icon for UI display, matching the collectible feather but simplified. Soft amber/honey color (#D9B382), clear at small sizes (16-24px). Style: clean watercolor with gentle brush strokes."
 
 #### 9. **Ability Icons**
 **Current:** Emoji symbols (⚡, 🌸, 🌊)
 **Prompts:**
-- **Speed Boost (⚡):** "Hand-drawn lightning bolt icon in a sketch style, dynamic and energetic"
-- **Hover (🌸):** "Hand-drawn flower or petal swirl icon suggesting gentle floating"
-- **Glide (🌊):** "Hand-drawn wind or wave lines suggesting smooth gliding"
+- **Speed Boost (⚡):** "Hand-drawn lightning bolt icon in a soft watercolor style, using muted blue tones (#8BA3B8)"
+- **Hover (🌸):** "Hand-drawn flower or petal swirl icon in dusty rose (#D9A5A0), suggesting gentle floating"
+- **Glide (🌊):** "Hand-drawn wind or wave lines in soft sage green (#A8B89F), suggesting smooth gliding"
 
-Size: 28-40px, clear at small sizes
+Size: 28-40px, clear at small sizes, soft watercolor aesthetic
 
 ---
 
@@ -106,7 +106,7 @@ Size: 28-40px, clear at small sizes
 
 #### 10. **Bird Species Portraits (Elder Encounters)**
 **Current:** Circular backgrounds with emoji
-**Prompt:** "Hand-drawn portrait-style illustrations of three bird species: Peregrine Falcon (blue tones), Hummingbird (red tones), and Albatross (green tones). Each should be beautifully detailed in a naturalistic sketch or watercolor style, showing the bird's head and upper body. Size: 140x140 pixels circular frame. Style: elegant, respectful of the real birds, with an artistic, hand-painted quality."
+**Prompt:** "Hand-drawn portrait-style illustrations of three bird species: Peregrine Falcon (muted dusty blue tones #8BA3B8), Hummingbird (soft dusty rose tones #D9A5A0), and Albatross (soft sage green tones #A8B89F). Each should be beautifully detailed in a naturalistic watercolor style, showing the bird's head and upper body. Size: 140x140 pixels circular frame. Style: elegant, peaceful, respectful of the real birds, with a gentle watercolor wash aesthetic matching the game's soft palette."
 
 #### 11. **Decorative UI Elements**
 - Hand-drawn borders for menus
@@ -138,14 +138,15 @@ Size: 28-40px, clear at small sizes
 ## 🎨 **Style Guidelines**
 
 ### Overall Aesthetic
-Hand-drawn, sketch-like with visible pen/ink/pencil strokes, warm and whimsical, inviting and playful rather than perfectly polished
+Soft watercolor-inspired with gentle brush strokes, peaceful and calming, ethereal and dreamy. The style should evoke a hand-painted storybook quality with muted, harmonious colors and subtle textures. Think gentle washes, organic shapes, and a cohesive pastel palette.
 
-### Color Palette
-- **Blues:** #4A90E2, #2E5F8A, #87CEEB
-- **Greens:** #228B22, #32CD32, #90EE90, #7ED321
-- **Yellows/Golds:** #FFD700, #FFA500
-- **Browns:** #8B4513, #654321
-- **Accent:** Red-orange #E94B3C
+### Color Palette (Soft Watercolor Palette)
+- **Sky Gradient:** #E8D5E8 (pale lavender) → #F0DDD8 (soft dusty rose) → #F5E6D3 (soft peach/cream)
+- **Blues (Bird):** #8BA3B8 (muted dusty blue body), #6B8399 (darker muted blue wings)
+- **Greens (Environment):** #A8B5A0 (muted sage ground), #C8E6D0 (soft mint platform), #9BAA8C (muted moss border), #6B7A5F (deep muted green)
+- **Ambers/Neutrals:** #D9B382 (soft amber/honey - beak & feathers), #C9A574 (darker warm beige), #F5F0E8 (soft off-white sparkles)
+- **Browns/Taupes (Obstacles):** #B09A8A (soft taupe), #9B8578 (darker muted brown), #C4B5A8 (light taupe highlight)
+- **Accents:** #D9A5A0 (soft dusty rose - hover particles), #9BA3A8 (soft gray), #6B7A7A (muted slate)
 
 ### Technical Specifications
 - All assets should work at small pixel sizes (most are 20-150px)
