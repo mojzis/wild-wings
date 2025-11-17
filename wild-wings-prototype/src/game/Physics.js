@@ -5,16 +5,16 @@
 
 const Physics = {
   // Gravity pulls the bird down
-  GRAVITY: 0.3,
+  GRAVITY: 0.25,
 
   // Flap strength pushes the bird up (negative because up is negative Y)
-  FLAP_STRENGTH: -8,
+  FLAP_STRENGTH: -6,
 
   // Terminal velocity - maximum falling speed
-  TERMINAL_VELOCITY: 8,
+  TERMINAL_VELOCITY: 6,
 
   // Maximum upward velocity
-  MAX_UPWARD_VELOCITY: -10,
+  MAX_UPWARD_VELOCITY: -8,
 
   /**
    * Apply gravity to velocity
