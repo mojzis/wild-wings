@@ -35,6 +35,10 @@ jobs:
         run: npm ci
         working-directory: ./wild-wings-prototype
 
+      - name: Run tests
+        run: npm test -- --watchAll=false --passWithNoTests
+        working-directory: ./wild-wings-prototype
+
       - name: Build
         run: npm run build
         working-directory: ./wild-wings-prototype
