@@ -72,6 +72,79 @@ class Level {
   }
 
   /**
+   * Generate random feather positions spread throughout the level
+   * @param {number} count - Number of feathers to generate
+   * @param {number} startX - Minimum X position
+   * @param {number} endX - Maximum X position
+   * @returns {Array} Array of {x, y} positions
+   */
+  generateRandomFeatherPositions(count, startX, endX) {
+    const positions = [];
+    const minY = 80; // Avoid very top of screen
+    const maxY = this.height - 120; // Avoid very bottom (ground area)
+    const minDistance = 80; // Minimum distance between feathers
+    const obstacleBuffer = 40; // Minimum distance from obstacles
+
+    let attempts = 0;
+    const maxAttempts = count * 50; // Prevent infinite loop
+
+    while (positions.length < count && attempts < maxAttempts) {
+      attempts++;
+
+      // Generate random position
+      const x = startX + Math.random() * (endX - startX);
+      const y = minY + Math.random() * (maxY - minY);
+
+      // Check if position is too close to existing feathers
+      let tooClose = false;
+      for (let pos of positions) {
+        const dx = x - pos.x;
+        const dy = y - pos.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < minDistance) {
+          tooClose = true;
+          break;
+        }
+      }
+
+      if (tooClose) continue;
+
+      // Check if position is too close to obstacles
+      let tooCloseToObstacle = false;
+      for (let obstacle of this.obstacles) {
+        // Simple rectangular distance check
+        const closestX = Math.max(obstacle.x, Math.min(x, obstacle.x + obstacle.width));
+        const closestY = Math.max(obstacle.y, Math.min(y, obstacle.y + obstacle.height));
+        const dx = x - closestX;
+        const dy = y - closestY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < obstacleBuffer) {
+          tooCloseToObstacle = true;
+          break;
+        }
+      }
+
+      if (tooCloseToObstacle) continue;
+
+      // Position is valid, add it
+      positions.push({ x, y });
+    }
+
+    // If we couldn't generate enough positions, fill remaining with simple positions
+    while (positions.length < count) {
+      const segmentWidth = (endX - startX) / count;
+      const index = positions.length;
+      positions.push({
+        x: startX + segmentWidth * index + Math.random() * segmentWidth * 0.5,
+        y: minY + Math.random() * (maxY - minY)
+      });
+    }
+
+    return positions;
+  }
+
+  /**
    * Create the level layout with obstacles and collectibles
    */
   createLevelLayout() {
@@ -127,35 +200,9 @@ class Level {
       new Obstacle(2250, 380, 80, 150)
     ];
 
-    // Create collectibles (wind feathers) - 15 total
-    const featherPositions = [
-      // Starting area - easy to reach
-      { x: 350, y: 250 },
-      { x: 450, y: 180 },
-
-      // Early section
-      { x: 600, y: 280 },
-      { x: 700, y: 150 },
-      { x: 650, y: 420 },
-
-      // Before safe zone
-      { x: 850, y: 300 },
-      { x: 1000, y: 380 },
-
-      // Near safe zone
-      { x: 1150, y: 250 },
-
-      // After safe zone - requires more skill
-      { x: 1600, y: 200 },
-      { x: 1650, y: 330 },
-      { x: 1800, y: 180 },
-      { x: 1950, y: 350 },
-
-      // End section - challenging
-      { x: 2100, y: 280 },
-      { x: 2150, y: 420 },
-      { x: 2300, y: 300 }
-    ];
+    // Create collectibles (wind feathers) - 15 total, randomized positions
+    const numFeathers = 15;
+    const featherPositions = this.generateRandomFeatherPositions(numFeathers, 200, this.width - 200);
 
     this.collectibles = featherPositions.map(pos => new Collectible(pos.x, pos.y));
     this.totalFeathers = this.collectibles.length;
@@ -219,38 +266,9 @@ class Level {
       new Obstacle(2600, 150, 65, 180)
     ];
 
-    // Create collectibles - 20 feathers with some in tight spots
-    const featherPositions = [
-      // Starting area
-      { x: 330, y: 280 },
-      { x: 480, y: 150 },
-
-      // Early section - some require precise flying
-      { x: 620, y: 310 },
-      { x: 750, y: 90 },
-      { x: 780, y: 480 },
-      { x: 930, y: 320 },
-
-      // Before first safe zone
-      { x: 1050, y: 380 },
-      { x: 1150, y: 200 },
-
-      // Between safe zones - challenging positions
-      { x: 1500, y: 280 },
-      { x: 1550, y: 100 },
-      { x: 1700, y: 450 },
-      { x: 1880, y: 310 },
-      { x: 1920, y: 480 },
-      { x: 2050, y: 360 },
-      { x: 2150, y: 150 },
-
-      // After second safe zone
-      { x: 2350, y: 320 },
-      { x: 2480, y: 280 },
-      { x: 2550, y: 420 },
-      { x: 2650, y: 380 },
-      { x: 2700, y: 250 }
-    ];
+    // Create collectibles - 20 feathers, randomized positions
+    const numFeathers = 20;
+    const featherPositions = this.generateRandomFeatherPositions(numFeathers, 200, this.width - 200);
 
     this.collectibles = featherPositions.map(pos => new Collectible(pos.x, pos.y));
     this.totalFeathers = this.collectibles.length;
