@@ -27,6 +27,30 @@ const ABILITIES = {
     cooldown: 12000, // 12 seconds
     icon: '🌊',
     color: '#7ED321'
+  },
+  endurance_flight: {
+    id: 'endurance_flight',
+    name: 'Marathon Wings',
+    duration: 5000, // 5 seconds
+    cooldown: 15000, // 15 seconds
+    icon: '🌅',
+    color: '#FF6B35'
+  },
+  echo_vision: {
+    id: 'echo_vision',
+    name: 'Silent Hunter',
+    duration: 4000, // 4 seconds
+    cooldown: 10000, // 10 seconds
+    icon: '👂',
+    color: '#C7A27C'
+  },
+  polar_stamina: {
+    id: 'polar_stamina',
+    name: 'Endless Journey',
+    duration: 6000, // 6 seconds
+    cooldown: 18000, // 18 seconds
+    icon: '❄️',
+    color: '#5BC0EB'
   }
 };
 

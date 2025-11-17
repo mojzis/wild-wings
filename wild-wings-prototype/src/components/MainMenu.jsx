@@ -15,7 +15,8 @@ const MainMenu = ({ onStartLevel }) => {
 
   const levels = [
     { number: 1, name: 'First Flight', description: 'Learn the basics of flight' },
-    { number: 2, name: 'Storm Chaser', description: 'Master your abilities in tougher winds' }
+    { number: 2, name: 'Storm Chaser', description: 'Master your abilities in tougher winds' },
+    { number: 3, name: 'Sky Master', description: 'The ultimate test of your flying skills' }
   ];
 
   const handleLevelSelect = (levelNumber) => {
