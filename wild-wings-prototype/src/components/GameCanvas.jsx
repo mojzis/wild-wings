@@ -9,6 +9,8 @@ import Level from '../game/Level';
 import AbilitySystem from '../game/AbilitySystem';
 import ElderEncounter from './ElderEncounter';
 import gameStateManager from '../game/GameStateManager';
+import Physics from '../game/Physics';
+import Settings from './Settings';
 
 const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
   const canvasRef = useRef(null);
@@ -19,6 +21,7 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
   const [isPaused, setIsPaused] = useState(false);
   const [levelComplete, setLevelComplete] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Game state refs (using refs to avoid re-renders in game loop)
   const playerRef = useRef(null);
@@ -96,6 +99,14 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
       }
     }
   };
+
+  // Load saved gravity setting
+  useEffect(() => {
+    const savedGravity = localStorage.getItem('wildWingsGravity');
+    if (savedGravity !== null) {
+      Physics.GRAVITY = parseFloat(savedGravity);
+    }
+  }, []);
 
   // Initialize game
   useEffect(() => {
@@ -242,8 +253,8 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
       // Update player physics (use level dimensions instead of canvas)
       player.update = function() {
         // Apply gravity
-        this.velocityY += 0.5;
-        this.velocityY = Math.min(this.velocityY, 10);
+        this.velocityY += Physics.GRAVITY;
+        this.velocityY = Math.min(this.velocityY, Physics.TERMINAL_VELOCITY);
 
         // Update position
         this.y += this.velocityY;
@@ -712,6 +723,16 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
                 Resume (ESC)
               </button>
               <button
+                style={{...pauseStyles.button, ...pauseStyles.tertiaryButton}}
+                onClick={() => {
+                  setShowSettings(true);
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#7A93A9'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#8BA3B8'}
+              >
+                ⚙️ Settings
+              </button>
+              <button
                 style={{...pauseStyles.button, ...pauseStyles.secondaryButton}}
                 onClick={() => {
                   if (window.confirm('Return to main menu? Progress will be saved.')) {
@@ -728,6 +749,9 @@ const GameCanvas = ({ levelNumber = 1, onReturnToMenu }) => {
           </div>
         </div>
       )}
+
+      {/* Settings Modal */}
+      <Settings isOpen={showSettings} onClose={() => setShowSettings(false)} />
     </div>
   );
 };
@@ -868,6 +892,9 @@ const pauseStyles = {
     boxShadow: '0 4px 8px rgba(155, 170, 140, 0.3)'  // Soft shadow
   },
   secondaryButton: {
+    backgroundColor: '#8BA3B8'  // Dusty blue
+  },
+  tertiaryButton: {
     backgroundColor: '#8BA3B8'  // Dusty blue
   },
   hint: {

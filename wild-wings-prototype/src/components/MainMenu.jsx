@@ -3,10 +3,12 @@
  * Main menu with title and level selection
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import gameStateManager from '../game/GameStateManager';
+import Settings from './Settings';
 
 const MainMenu = ({ onStartLevel }) => {
+  const [showSettings, setShowSettings] = useState(false);
   const unlockedLevels = gameStateManager.getUnlockedLevels();
   const completedLevels = gameStateManager.state.completedLevels;
   const completionPercentage = gameStateManager.getCompletionPercentage();
@@ -109,20 +111,33 @@ const MainMenu = ({ onStartLevel }) => {
       {/* Footer */}
       <div style={styles.footer}>
         <p style={styles.footerText}>Use SPACE to flap, ARROWS to move, E to activate abilities</p>
-        <button
-          style={styles.resetButton}
-          onClick={() => {
-            if (window.confirm('Are you sure you want to reset all progress?')) {
-              gameStateManager.resetProgress();
-              window.location.reload();
-            }
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#C89591'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#D9A5A0'}
-        >
-          Reset Progress
-        </button>
+        <div style={styles.buttonContainer}>
+          <button
+            style={styles.settingsButton}
+            onClick={() => setShowSettings(true)}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#7A93A9'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#8BA3B8'}
+          >
+            ⚙️ Settings
+          </button>
+          <button
+            style={styles.resetButton}
+            onClick={() => {
+              if (window.confirm('Are you sure you want to reset all progress?')) {
+                gameStateManager.resetProgress();
+                window.location.reload();
+              }
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#C89591'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#D9A5A0'}
+          >
+            Reset Progress
+          </button>
+        </div>
       </div>
+
+      {/* Settings Modal */}
+      <Settings isOpen={showSettings} onClose={() => setShowSettings(false)} />
     </div>
   );
 };
@@ -351,6 +366,24 @@ const styles = {
     color: '#9BA3A8',  // Soft gray
     fontSize: '14px',
     marginBottom: '15px'
+  },
+  buttonContainer: {
+    display: 'flex',
+    gap: '15px',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  settingsButton: {
+    backgroundColor: '#8BA3B8',  // Dusty blue
+    color: '#F5F0E8',  // Soft off-white
+    border: 'none',
+    padding: '10px 25px',
+    borderRadius: '20px',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 6px rgba(139, 163, 184, 0.3)'  // Soft shadow
   },
   resetButton: {
     backgroundColor: '#D9A5A0',  // Soft dusty rose
