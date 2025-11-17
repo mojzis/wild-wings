@@ -1,0 +1,140 @@
+# Wild Wings: Storm Chaser
+
+## Project Overview
+
+Wild Wings: Storm Chaser is an educational side-scrolling flight action/adventure game designed for children ages 6-8 (grades 1-3). The game transforms reading practice into an exhilarating flight adventure where ornithological knowledge directly translates to gameplay power.
+
+## Core Concept
+
+**"Read about birds to fly like birds."**
+
+Every animal fact learned unlocks that bird's real-world flight ability as a usable power. Children don't read to earn game time—they read to master the skies. Knowledge equals power, literally.
+
+## Target Platform
+
+- **Primary**: iOS/Android tablets
+- **Potential**: PC/Console ports
+- **Current Prototype**: Web-based (React)
+
+## Educational Value
+
+- **Reading Volume**: 500-800 words per 30-minute session
+- **Vocabulary Exposure**: 200+ ornithology and nature terms
+- **Reading Level**: Lexile 200-500L (grades 1-3)
+- **Retention Method**: Immediate application of learned information through gameplay
+
+## Technical Stack
+
+### Prototype
+- **Framework**: React 19.2.0
+- **Build Tool**: Create React App (react-scripts 5.0.1)
+- **Deployment**: GitHub Pages (https://mojzis.github.io/wild-wings)
+
+### Target Production
+- **Game Engine**: Unity 2022 LTS
+- **Animation**: Spine for character animation
+- **Text Rendering**: TextMesh Pro with accessibility features
+- **Analytics**: Firebase (no player data collection)
+
+## Project Structure
+
+```
+wild-wings/
+├── wild-wings-prototype/    # React-based game prototype
+│   ├── src/                 # Source code
+│   ├── public/              # Static assets
+│   └── package.json         # Dependencies and scripts
+├── plans/                   # Design documentation
+│   ├── wild-wings-storm-chaser-gdd.md       # Complete Game Design Document
+│   └── wild-wings-prototype-plan.md         # Prototype implementation plan
+└── .github/                 # GitHub Actions (Pages deployment)
+```
+
+## Game Design Pillars
+
+1. **Flight Should Feel Magical**: Responsive, liberating, and rewarding controls
+2. **Knowledge = Power**: Reading unlocks abilities intrinsically, not as a gate
+3. **Real Birds, Real Science**: Scientifically accurate facts from ornithology organizations
+4. **Respect the Reader**: Clear text, no time pressure, hybrid voice support
+5. **Discovery Through Exploration**: Curiosity-driven learning moments
+
+## Core Gameplay Loop
+
+```
+Fly through region → Use learned bird abilities → Reach safe zone →
+Meet Elder Bird mentor → Read 2-3 sentence fact → Unlock new ability → Repeat
+```
+
+## Content Structure
+
+The game features **4 Seasons = 4 Chapters**, mirroring real bird migration:
+
+1. **Summer Fledging** (8 levels, ~1.5 hours) - Tutorial region with common forest birds
+2. **Fall Migration** (12 levels, ~2 hours) - Journey south with migratory specialists
+3. **Winter Survival** (10 levels, ~1.5 hours) - Southern wintering grounds with tropical birds
+4. **Spring Return** (15 levels, ~2.5 hours) - Return journey with advanced specialists
+
+**Total**: 45 levels, 50+ bird species to learn about, 7-8 hours of gameplay
+
+## Key Features
+
+- **Elder Bird System**: NPCs teach ornithology facts that unlock abilities
+- **Flight Mechanics**: Physics-based with thermals, wind currents, stamina management
+- **Special Abilities**: Each bird species unlocks 1-3 abilities (e.g., Peregrine Falcon's Dive Bomb)
+- **Field Guide**: Comprehensive digital encyclopedia of discovered birds
+- **Nest Customization**: Creative home base personalization
+- **Parent Dashboard**: Reading progress tracking and educational metrics
+- **Accessibility**: Dyslexia-friendly fonts, text sizing, colorblind modes, screen reader support
+
+## Educational Framework
+
+Aligned with **Common Core Reading Standards** (RI.1-2, RF.1-2, L.1-2):
+- Informational text comprehension
+- Vocabulary acquisition (200+ tier 2/3 words)
+- Reading fluency and accuracy
+- Context-based learning
+
+**Scientific Accuracy Partners**:
+- Cornell Lab of Ornithology
+- National Audubon Society
+- Local Natural History Museums
+
+## Development Status
+
+**Current Phase**: Prototype Development
+- React-based web prototype demonstrating core flight mechanics
+- GitHub Pages deployment for testing and feedback
+- Full GDD completed (5,500+ words)
+
+**Next Steps**:
+1. Vertical slice completion
+2. Educational partnership agreements
+3. Alpha testing with target demographic
+4. Production team assembly
+5. Unity migration for full game development
+
+## Business Model
+
+**Recommended**: Premium purchase ($9.99) - ad-free, educational positioning
+**Alternative**: Freemium with Season 1 free, Seasons 2-4 unlock ($9.99)
+
+## Success Metrics
+
+- **Educational**: 500-800 words read per 30min session, 70%+ vocabulary retention
+- **Engagement**: 20-30min avg session, 3-5 sessions/week, 40%+ day-7 retention
+- **Parent Satisfaction**: 4.5+ star rating, 90%+ report learning improvement
+
+## Contributing
+
+This project emphasizes:
+- Child-safe, age-appropriate content
+- Scientific accuracy in all ornithology facts
+- Accessibility for diverse learning needs
+- Privacy-first approach (no player data collection)
+- Encouraging reading through intrinsic motivation
+
+## References
+
+- See `plans/wild-wings-storm-chaser-gdd.md` for complete game design documentation
+- See `plans/wild-wings-prototype-plan.md` for prototype implementation details
+- Prototype available at: https://mojzis.github.io/wild-wings
